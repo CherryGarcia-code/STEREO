@@ -1,0 +1,10 @@
+# Python 3.10 (tested). Any recent 3.9–3.12 should work.
+# These are the exact versions the figures were generated and verified with.
+numpy==1.26.4
+pandas==1.5.3
+matplotlib==3.7.1
+seaborn==0.13.2
+scipy==1.10.1
+
+# Quick install:
+#   python -m pip install -r requirements.txt
