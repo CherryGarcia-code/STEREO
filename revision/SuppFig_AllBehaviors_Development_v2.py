@@ -36,7 +36,7 @@ os.makedirs(output_folder, exist_ok=True)
 # ---------------------------------------------------------------------------
 # Load & flatten
 # ---------------------------------------------------------------------------
-CMT = load_CMT('Dec24')
+CMT = load_CMT()
 MT, mouse_to_cohort = flatten_CMT(CMT, cohorts)
 del CMT
 print(f'Loaded {len(MT)} mice from {len(cohorts)} cohorts')

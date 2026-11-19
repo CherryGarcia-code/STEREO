@@ -10,17 +10,23 @@ import scipy.signal as signal
 import pickle
 import scipy.stats as stats
 import networkx as nx
-root_folder = '.'
+root_folder = 'output'
 folder = 'data/'
-ifile = bz2.BZ2File(folder + 'CTM_May24.pkl', 'rb')
-CTM = pickle.load(ifile)
-ifile.close()
-ifile = bz2.BZ2File(folder + 'CMT_May24.pkl', 'rb')
-CMT = pickle.load(ifile)
-ifile.close()
+import data_io
+CTM = data_io.load_CTM(flatten=True)
+CMT = data_io.load_CMT(flatten=True)
 print('***All dictionaries were loaded***')
-behaviors = ['Grooming', 'Body licking', 'Wall licking', 'Floor licking', 'Rearing', 'Back to camera', 'Stationary','Locomotion',  'Jump']
-colors = ['#c21296', '#06d6a0', '#ee476f', '#1189b1', '#ffd169', '#783f04', '#596163','#969595', '#b4a7d6']
+behaviors = ['Grooming', 'Body licking', 'Wall licking', 'Floor licking', 'Rearing', 'Undefined', 'Stationary','Locomotion',  'Jump']
+# This script indexes behaviours by position in the `behaviors` list above,
+# which is NOT the canonical Apr26 order. Derive the permutation from the names
+# so a mismatch raises instead of silently mislabelling.
+_relabel = data_io.relabel_lut(behaviors)
+for _D in (CTM, CMT):
+    for _l1 in _D.values():
+        for _l2 in _l1.values():
+            for _e in _l2.values():
+                _e['merged'] = _relabel[_e['merged']]
+colors = data_io.palette_for(behaviors)
 SSD_color = '#CC6677'
 velocity_color = '#44AA99'
 FPS=15
@@ -68,7 +74,8 @@ del CTM
 
 #%% Ethograms
 RNN_offset = 7
-output_folder = root_folder+'/Figures/SplashTest_behaviorOnly/Ethograms/'
+output_folder = root_folder+'/SplashTest_behaviorOnly/Ethograms/'
+os.makedirs(output_folder, exist_ok=True)
 for m in splashTest_days:
     fig, ax = plt.subplots(nrows=4, sharex='all', figsize=(18, 6))
     print(m , splashTest_days[m].keys())
@@ -113,7 +120,8 @@ PRE1 = 0
 PRE2 = 1
 PRE3 = 2
 ST = 3
-output_folder = root_folder+'/Figures/SplashTest_behaviorOnly/Summary/'
+output_folder = root_folder+'/SplashTest_behaviorOnly/Summary/'
+os.makedirs(output_folder, exist_ok=True)
 num_of_mice = len(splashTest_days.keys())
 fraction_of_frames = np.zeros((num_of_behaviors,4,num_of_mice))
 labels_dict = {PRE1:'Baseline1',PRE2:'Baseline2',PRE3:'Baseline3',ST:'Splash-test'}
@@ -144,7 +152,8 @@ plt.suptitle('Baseline days compared to splash test day')
 plt.savefig(output_folder+'splashTest_behavior_distribution.png',dpi=300)
 plt.close()
 #%% States & actions diagram
-output_folder = root_folder+'/Figures/SplashTest_behaviorOnly/States&Actions/'
+output_folder = root_folder+'/SplashTest_behaviorOnly/States&Actions/'
+os.makedirs(output_folder, exist_ok=True)
 num_of_mice = len(splashTest_days.keys())
 transition_prob = np.zeros((4,num_of_mice,num_of_behaviors, num_of_behaviors))
 time_spent=np.zeros((4,num_of_mice,num_of_behaviors))
@@ -229,7 +238,8 @@ plt.close()
 #%% CDFs pf bout length
 import matplotlib as mpl
 mpl.rcParams["mathtext.fontset"] = 'cm'
-output_folder = root_folder+'/Figures/SplashTest_behaviorOnly/Bouts/'
+output_folder = root_folder+'/SplashTest_behaviorOnly/Bouts/'
+os.makedirs(output_folder, exist_ok=True)
 labels_dict = {PRE1:'Baseline1',PRE2:'Baseline2',PRE3:'Baseline3',ST:'Splash-test'}
 colors_prime = ['gray','gray','gray','blue']
 alpha_prime = [.3,.5,.7,.5,]
@@ -276,7 +286,8 @@ PRE2 = 1
 PRE3 = 2
 ST = 3
 x_axis = np.arange(0,200,0.1)
-output_folder = root_folder+'/Figures/SplashTest_behaviorOnly/Movement_parameters/'
+output_folder = root_folder+'/SplashTest_behaviorOnly/Movement_parameters/'
+os.makedirs(output_folder, exist_ok=True)
 num_of_mice = len(splashTest_days.keys())
 baseline_ssd_tot = {0:[],1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[]}
 st_ssd_tot = {0:[],1:[],2:[],3:[],4:[],5:[],6:[],7:[],8:[],9:[]}
@@ -326,7 +337,8 @@ PRE2 = 1
 PRE3 = 2
 ST = 3
 x_axis = np.arange(0,200,0.1)
-output_folder = root_folder+'/Figures/SplashTest_behaviorOnly/Movement_parameters/'
+output_folder = root_folder+'/SplashTest_behaviorOnly/Movement_parameters/'
+os.makedirs(output_folder, exist_ok=True)
 num_of_mice = len(splashTest_days.keys())
 m_idx=0
 baseline_ssd_tot = np.empty((num_of_mice ,3,num_of_behaviors, x_axis.size))

@@ -10,7 +10,7 @@ Panels (2 rows x 3 cols):
                  C. Time-warped heatmap sorted by original duration
   Row 2 (iSPN): D-F same layout
 
-Uses CMT_Dec24.pkl with photom_exclusions applied.
+Uses CMT_Apr26.pkl with photom_exclusions applied.
 """
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
@@ -57,8 +57,8 @@ photom_cohorts = ['drd1_hm4di', 'drd1_hm3dq', 'controls', 'a2a_hm4di', 'a2a_hm3d
 # ---------------------------------------------------------------------------
 # Load data and apply exclusions
 # ---------------------------------------------------------------------------
-print('Loading CMT_Dec24...')
-CMT = load_CMT('Dec24')
+print('Loading CMT...')
+CMT = load_CMT()
 
 # Apply photom_exclusions
 trials_all = ['saline1', 'saline2', 'saline3',
@@ -107,7 +107,7 @@ for cohort in photom_cohorts:
         if 'photom' not in entry:
             continue
 
-        # Get predictions (Dec24 format already flattened by load_CMT)
+        # Get predictions (already flattened to canonical labels by load_CMT)
         preds = entry['merged']
 
         # Get photometry signals

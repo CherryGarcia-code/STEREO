@@ -6,7 +6,7 @@ Panels:
   A-C: Transition matrices — Laser OFF, Laser ON, ON−OFF difference
   D-H: Bout duration CDFs laser-ON vs laser-OFF for key behaviors
 
-Uses CTM_Aug24.pkl, drd1_opto cohort + opto_alignment_dict.pkl.
+Uses CTM_Apr26.pkl, drd1_opto cohort + opto_alignment_dict.pkl.
 """
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
@@ -34,14 +34,14 @@ os.makedirs(output_folder, exist_ok=True)
 # ---------------------------------------------------------------------------
 # Load data
 # ---------------------------------------------------------------------------
-CTM = load_CTM('Dec24')  # Dec24 uses canonical encoding
+CTM = load_CTM()  # Apr26 uses canonical encoding
 stim_day = CTM['drd1_opto']['AloneStim']
 del CTM
 
 with open('data/opto_alignment_dict.pkl', 'rb') as f:
     opto_dict = pickle.load(f)
 
-# Canonical encoding (Dec24 = new encoding)
+# Canonical encoding
 n_beh = n_behaviors
 num_of_stims = 9
 

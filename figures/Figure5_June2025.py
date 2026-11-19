@@ -13,13 +13,13 @@ import scipy.stats as stats
 import matplotlib as mpl
 import networkx as nx
 from numpy.linalg import norm
+import data_io
 root_folder = '.'
 folder = 'data/'
-ifile = bz2.BZ2File(folder + 'CMT_Dec24.pkl', 'rb')
 FPS=15
 # ***CHANGE THE COHORT HERE***
 cohort = 'a2a_hm3dq'
-MT = pickle.load(ifile)[cohort]
+MT = data_io.load_CMT()[cohort]
 ifile.close()
 CNO2cocaineGap = {'drd1_hm4di':{'c512m3':30,'c512m4':30,'c512m7':30,'c526m2':32,'c526m3':35,'c528m5':31,'c528m10':38,'c548m1':31},
                   'drd1_hm3dq':{'c514Bm2':35,'c514Bm8':35,'c514m1':35,'c514m3':38,'c514m5':32},

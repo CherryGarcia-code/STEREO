@@ -86,9 +86,8 @@ def calc_behavioral_entropy(behavior, window_size, stride, n_behaviors):
     return np.array(out, dtype=float)
 
 #%% Load data
-ifile = bz2.BZ2File('data/CMT_Aug24.pkl', 'rb')
-CMT = pickle.load(ifile)
-ifile.close()
+import data_io
+CMT = data_io.load_CMT(flatten=True)
 print('Data loaded')
 
 TM = {}

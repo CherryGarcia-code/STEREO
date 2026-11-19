@@ -38,6 +38,39 @@ K = 2   # number of regime clusters
 CLUSTER_COLORS = ['#3399cc', '#d73027']   # flexible=blue, stereotyped=red
 CLUSTER_NAMES  = ['Flexible', 'Stereotyped']
 
+# ---------------------------------------------------------------------------
+# Locomotion (7) and Stationary (8) are merged into one locomotor/rest state.
+#
+# The Apr26 dictionaries differ from Dec24 in exactly one respect: the top-camera
+# velocity threshold that splits the classifier's single at-rest class into
+# Locomotion vs Stationary. That moved 2,108,692 frames from 7 to 8 -- 100% of
+# all differing frames -- and fragmented locomotor bouts. Every Locomotion<->
+# Stationary cell of a 9x9 transition matrix is therefore structure created by
+# the threshold rather than by behaviour, and it is exactly the kind of thing
+# k-means will happily cluster on. Merging the two makes these matrices
+# invariant to that choice, so the regimes are comparable across versions.
+# Classes 0-6 are untouched and identical between the two dictionaries.
+# ---------------------------------------------------------------------------
+MERGE_LOCOMOTOR = True
+LOCOMOTION, STATIONARY = 7, 8
+
+if MERGE_LOCOMOTOR:
+    N_BEH = 8
+    BEH_SHORT = ['Jmp', 'Udf', 'FL', 'WL', 'Grm', 'BL', 'Rer', 'Loc/Stn']
+else:
+    N_BEH = n_behaviors
+    BEH_SHORT = ['Jmp', 'Udf', 'FL', 'WL', 'Grm', 'BL', 'Rer', 'Loc', 'Stn']
+
+
+def collapse_locomotor(preds):
+    """Fold Stationary into Locomotion, leaving classes 0-6 untouched."""
+    preds = preds.astype(int)
+    if not MERGE_LOCOMOTOR:
+        return preds
+    out = preds.copy()
+    out[out == STATIONARY] = LOCOMOTION
+    return out
+
 trials = ['saline1', 'saline2', 'saline3',
           'cocaine1', 'cocaine2', 'cocaine3', 'cocaine4', 'cocaine5']
 session_labels = ['S1', 'S2', 'S3', 'C1', 'C2', 'C3', 'C4', 'C5']
@@ -47,9 +80,9 @@ is_saline = np.array([True, True, True, False, False, False, False, False])
 
 def compute_transition_vector(preds):
     """Row-normalised off-diagonal transition matrix flattened to 1D vector.
-    Returns (n_behaviors*(n_behaviors-1),) vector; off-diagonal only."""
-    preds = preds.astype(int)
-    mat = np.zeros((n_behaviors, n_behaviors), dtype=float)
+    Returns (N_BEH*(N_BEH-1),) vector; off-diagonal only."""
+    preds = collapse_locomotor(preds)
+    mat = np.zeros((N_BEH, N_BEH), dtype=float)
     for k in range(len(preds) - 1):
         if preds[k] != preds[k + 1]:
             mat[preds[k], preds[k + 1]] += 1
@@ -58,14 +91,14 @@ def compute_transition_vector(preds):
     row_sums[row_sums == 0] = 1.0
     mat /= row_sums
     # Flatten off-diagonal elements only
-    mask = ~np.eye(n_behaviors, dtype=bool)
+    mask = ~np.eye(N_BEH, dtype=bool)
     vec = mat[mask]
     return vec, mat
 
 
 def run_analysis(cohorts, suffix):
     print(f'\n=== Regime Clustering ({suffix}) ===')
-    CMT = load_CMT('Dec24')
+    CMT = load_CMT()
     MT, mouse_to_cohort = flatten_CMT(CMT, cohorts)
     del CMT
 
@@ -75,9 +108,9 @@ def run_analysis(cohorts, suffix):
     print(f'N = {n_mice} mice with complete data')
 
     # Build feature matrix: one row per (mouse, session) = n_mice*n_sessions rows
-    n_feat = n_behaviors * (n_behaviors - 1)  # off-diagonal elements
+    n_feat = N_BEH * (N_BEH - 1)  # off-diagonal elements
     X = np.zeros((n_mice * n_sessions, n_feat))
-    full_mats = np.zeros((n_mice * n_sessions, n_behaviors, n_behaviors))
+    full_mats = np.zeros((n_mice * n_sessions, N_BEH, N_BEH))
     mouse_ids, session_ids, cohort_ids = [], [], []
 
     for mi, m in enumerate(valid_mice):
@@ -121,7 +154,7 @@ def run_analysis(cohorts, suffix):
     ])
 
     # Centroid transition matrices
-    centroid_mats = np.zeros((K, n_behaviors, n_behaviors))
+    centroid_mats = np.zeros((K, N_BEH, N_BEH))
     for k_mapped in range(K):
         mask = labels_mapped == k_mapped
         centroid_mats[k_mapped] = full_mats[mask].mean(axis=0)
@@ -188,13 +221,13 @@ def run_analysis(cohorts, suffix):
               fontsize=12, fontweight='bold', va='top')
 
     # --- Panel D: Flexible regime centroid transition matrix ---
-    beh_short = ['Jmp', 'Udf', 'FL', 'WL', 'Grm', 'BL', 'Rer', 'Loc', 'Stn']
+    beh_short = BEH_SHORT
     ax_d = fig.add_subplot(gs[1, 0])
     im_d = ax_d.imshow(centroid_mats[0], cmap='Blues', vmin=0, vmax=0.5, aspect='equal')
     ax_d.set_title(f'"{CLUSTER_NAMES[0]}" regime\n(mean transition matrix)',
                    fontsize=8, fontweight='bold', pad=14)
-    ax_d.set_xticks(range(n_behaviors))
-    ax_d.set_yticks(range(n_behaviors))
+    ax_d.set_xticks(range(N_BEH))
+    ax_d.set_yticks(range(N_BEH))
     ax_d.set_xticklabels(beh_short, fontsize=5.5, rotation=45, ha='right')
     ax_d.set_yticklabels(beh_short, fontsize=5.5)
     ax_d.set_xlabel('To behavior', fontsize=7)
@@ -208,8 +241,8 @@ def run_analysis(cohorts, suffix):
     im_e = ax_e.imshow(centroid_mats[1], cmap='Reds', vmin=0, vmax=0.5, aspect='equal')
     ax_e.set_title(f'"{CLUSTER_NAMES[1]}" regime\n(mean transition matrix)',
                    fontsize=8, fontweight='bold', pad=14)
-    ax_e.set_xticks(range(n_behaviors))
-    ax_e.set_yticks(range(n_behaviors))
+    ax_e.set_xticks(range(N_BEH))
+    ax_e.set_yticks(range(N_BEH))
     ax_e.set_xticklabels(beh_short, fontsize=5.5, rotation=45, ha='right')
     ax_e.set_yticklabels(beh_short, fontsize=5.5)
     ax_e.set_xlabel('To behavior', fontsize=7)
@@ -226,8 +259,8 @@ def run_analysis(cohorts, suffix):
                        aspect='equal')
     ax_f.set_title('Difference matrix\n(Stereotyped − Flexible)', fontsize=8,
                    fontweight='bold', pad=14)
-    ax_f.set_xticks(range(n_behaviors))
-    ax_f.set_yticks(range(n_behaviors))
+    ax_f.set_xticks(range(N_BEH))
+    ax_f.set_yticks(range(N_BEH))
     ax_f.set_xticklabels(beh_short, fontsize=5.5, rotation=45, ha='right')
     ax_f.set_yticklabels(beh_short, fontsize=5.5)
     ax_f.set_xlabel('To behavior', fontsize=7)
@@ -236,10 +269,8 @@ def run_analysis(cohorts, suffix):
     ax_f.text(-0.25, 1.15, 'F', transform=ax_f.transAxes,
               fontsize=12, fontweight='bold', va='top')
 
-    # Top legend: sessions
-    fig.legend(handles=leg_els, ncol=8, loc='upper center',
-               bbox_to_anchor=(0.5, 0.97), fontsize=6.5, frameon=False,
-               title='Session', title_fontsize=7)
+    # (No figure-level session legend: panel B already carries one, and a second
+    #  copy at the top of the figure overlapped the panel A/B titles.)
 
     save_fig(fig, output_folder, f'Int5_RegimeClustering_{suffix}')
 

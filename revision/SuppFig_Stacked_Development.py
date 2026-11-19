@@ -6,7 +6,7 @@ Panels:
   A-H: Stacked area plots showing full behavioral distributions per session (saline1-3 + cocaine1-5)
   I-K: Within-session stackplots for saline3, cocaine1, cocaine5
 
-Uses CMT_Aug24.pkl, 4 cohorts (excl. hm3Dq).
+Uses CMT_Apr26.pkl, 4 cohorts (excl. hm3Dq).
 """
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
@@ -31,7 +31,7 @@ os.makedirs(output_folder, exist_ok=True)
 # ---------------------------------------------------------------------------
 # Load & flatten
 # ---------------------------------------------------------------------------
-CMT = load_CMT('Dec24')
+CMT = load_CMT()
 MT, mouse_to_cohort = flatten_CMT(CMT, cohorts)
 del CMT
 

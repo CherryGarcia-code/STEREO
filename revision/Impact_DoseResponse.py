@@ -29,7 +29,7 @@ os.makedirs(output_folder, exist_ok=True)
 # ---------------------------------------------------------------------------
 # Load data
 # ---------------------------------------------------------------------------
-CMT = load_CMT('Dec24')
+CMT = load_CMT()
 MT, mouse_to_cohort = flatten_CMT(CMT, cohorts)
 del CMT
 

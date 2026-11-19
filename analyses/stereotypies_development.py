@@ -15,14 +15,12 @@ import pickle
 import scipy.stats as stats
 import networkx as nx
 import os
-root_folder = '.'
+root_folder = 'output'
 folder = 'data/'
-ifile = bz2.BZ2File(folder + 'CTM_Aug24.pkl', 'rb')
-CTM = pickle.load(ifile)
-ifile.close()
-ifile = bz2.BZ2File(folder + 'CMT_Aug24.pkl', 'rb')
-CMT = pickle.load(ifile)
-ifile.close()
+import data_io
+# Apr26 labels are canonical; flatten=True puts the array at ['merged'].
+CTM = data_io.load_CTM(flatten=True)
+CMT = data_io.load_CMT(flatten=True)
 print('***All dictionaries were loaded***')
 behaviors = ['Jump', 'Undefined', 'Floor licking', 'Wall licking', 'Grooming', 'Body licking', 'Rearing', 'Locomotion', 'Stationary']
 colors = ["#696969", "#d3d3d3", "#d73027", "#e57373", "#c4a7e7", "#8e63b8", "#b3e5fc", "#3399cc", "#1f4e79"]
@@ -75,15 +73,12 @@ TM = {}
 for c in cohorts:
     for m in CMT[c]:
         MT[m] = copy.deepcopy(CMT[c][m])
-        for t in MT[m]:
-            MT[m][t]['merged'] =  lut[MT[m][t]['merged']]
 for cohort in cohorts:
     for mouse in CMT[cohort].keys():
         for t in CMT[cohort][mouse].keys():
             if t not in TM.keys():
                 TM[t] = {}
             TM[t][mouse] = copy.deepcopy(CMT[cohort][mouse][t])
-            TM[t][mouse]['merged'] = lut[TM[t][mouse]['merged']]
 del CMT
 del CTM
 
@@ -98,7 +93,7 @@ import seaborn as sns
 
 #%%
 # Setup output folder
-output_folder = root_folder + '/Figures/Stereotypies_development/Summary/'
+output_folder = root_folder + '/Stereotypies_development/Summary/'
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
 
@@ -197,7 +192,7 @@ plt.close()
 
 
 #%%Change in SSD for each behavior, across the days of stereotypies development
-output_folder = root_folder+'/Figures/Stereotypies_development/Movement_parameters/'
+output_folder = root_folder+'/Stereotypies_development/Movement_parameters/'
 
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
@@ -279,7 +274,7 @@ plt.rc('xtick', labelsize=SMALL_SIZE)    # Controls x tick label size
 plt.rc('ytick', labelsize=SMALL_SIZE)    # Controls y tick label size
 plt.rc('legend', fontsize=SMALL_SIZE)    # Controls legend font size
 
-output_folder = root_folder + '/Figures/Stereotypies_development/Movement_parameters/'
+output_folder = root_folder + '/Stereotypies_development/Movement_parameters/'
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
 
@@ -335,7 +330,7 @@ plt.show()
 # plt.close()
 
 #%% Saline 1,2,3 to salineOnly comparison
-output_folder = root_folder+'/Figures/Stereotypies_development/Summary/'
+output_folder = root_folder+'/Stereotypies_development/Summary/'
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
 num_of_mice = []
@@ -367,7 +362,7 @@ plt.suptitle('Cocaine long lasting effect\n Pre cocaine saline days compared to 
 plt.savefig(output_folder+'cocaine_long_term_effect.pdf',dpi=300)
 plt.close()
 #%% States and actions diagrams for transitions probabilities and time spent in each behavior
-output_folder = root_folder+'/Figures/Stereotypies_development/States & Actions/'
+output_folder = root_folder+'/Stereotypies_development/States & Actions/'
 
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
@@ -396,7 +391,12 @@ for t in trials_subset:
         time_spent[t_idx, m_idx, :] /= np.sum(time_spent[t_idx, m_idx, :])
         np.fill_diagonal(transition_prob[t_idx, m_idx, :, :], 0)
         for b in range(num_of_behaviors):
-            transition_prob[t_idx,m_idx,b,:]/=np.sum(transition_prob[t_idx,m_idx,b,:])
+            # A behaviour the mouse never showed has an all-zero row; dividing
+            # produced NaN, which propagated into the graph edge weights and
+            # made savefig raise "Can only output finite numbers in PDF".
+            row_sum = np.sum(transition_prob[t_idx,m_idx,b,:])
+            if row_sum > 0:
+                transition_prob[t_idx,m_idx,b,:]/=row_sum
         m_idx+=1
     mice_mean_transition_prob[t_idx,:,:] = np.sum(transition_prob[t_idx,:,:,:],axis=0) / float(num_of_mice[t_idx])
     mice_mean_time_spent[t_idx,:] = np.sum(time_spent[t_idx,:,:], axis=0) / float(num_of_mice[t_idx])
@@ -488,7 +488,7 @@ import matplotlib as mpl
 
 
 
-output_folder = root_folder + '/Figures/Stereotypies_development/Bouts/'
+output_folder = root_folder + '/Stereotypies_development/Bouts/'
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
 
@@ -542,7 +542,7 @@ for b in range(num_of_behaviors):
     plt.savefig(output_folder + 'bout_length_cdf' + behaviors[b] + '.pdf', dpi=300)
     plt.close()
 #%%Change in velocity for floor licking, across the days of stereotypies development
-output_folder = root_folder+'/Figures/Stereotypies_development/Movement_parameters/'
+output_folder = root_folder+'/Stereotypies_development/Movement_parameters/'
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
 
@@ -557,9 +557,13 @@ for tr in trials:
     for m in TM[tr]:
         predictions = TM[tr][m]['merged']
         session_vel = TM[tr][m]['topcam']['velocity']*FPS
-        session_vel = hf.remove_IQR_outliers(session_vel)
+        # remove_IQR_outliers returns inlier indices, so build a keep-mask that
+        # stays aligned with `predictions` and drops outliers (and NaN velocity)
+        # rather than leaving them in as NaN, which used to inflate the CDF denominator.
+        keep = np.zeros(session_vel.shape, dtype=bool)
+        keep[hf.remove_IQR_outliers(session_vel).ravel()] = True
         for b in behaviors_of_interset:
-            vel[b][tr].extend(session_vel[predictions==b])
+            vel[b][tr].extend(session_vel[(predictions==b) & keep])
 print('Finshed collecting data')
 colors_prime = ['gray','gray','gray','blue','turquoise','green','orange','red']
 alpha_prime = [.3,.5,.7,.5,.5,.5,.5,.5]
@@ -721,7 +725,7 @@ plt.rc('xtick', labelsize=SMALL_SIZE)    # Controls x tick label size
 plt.rc('ytick', labelsize=SMALL_SIZE)    # Controls y tick label size
 plt.rc('legend', fontsize=SMALL_SIZE)    # Controls legend font size
 
-output_folder = root_folder + '/Figures/Stereotypies_development/Movement_parameters/'
+output_folder = root_folder + '/Stereotypies_development/Movement_parameters/'
 if not os.path.exists(output_folder):
     os.makedirs(output_folder)
 

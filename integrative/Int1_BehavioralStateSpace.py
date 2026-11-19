@@ -47,7 +47,7 @@ def compute_occupancy(preds, n_beh):
 
 def run_analysis(cohorts, suffix):
     print(f'\n=== PCA State-Space ({suffix}) ===')
-    CMT = load_CMT('Dec24')
+    CMT = load_CMT()
     MT, mouse_to_cohort = flatten_CMT(CMT, cohorts)
     del CMT
 

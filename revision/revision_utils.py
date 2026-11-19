@@ -78,52 +78,26 @@ subOptimal_infection = ['c512m4']
 # ---------------------------------------------------------------------------
 # Data loading
 # ---------------------------------------------------------------------------
-_data_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data')
+# The dataset version lives in data_io.DATA_VERSION -- change it there, not here.
+import data_io
+from data_io import DATA_VERSION, CANONICAL_VERSIONS
 
-def _get_preds(entry, version):
-    """Extract prediction array from a trial entry, handling format differences."""
-    if version == 'Dec24':
-        return entry['merged']['predictions']['smartMerge']
-    else:
-        return entry['merged']
+_data_folder = data_io.DATA_DIR
 
-def load_CMT(version='Dec24', remap=True):
+_get_preds = data_io.get_preds
+
+def load_CMT(version=None, remap=True):
     """Load CMT pickle (Cohort→Mouse→Trial). Returns dict with 'merged' as preds array.
-    version: 'Dec24' (new, no remap needed), 'Aug24'/'May24' (old, remap via LUT)
-    remap: apply LUT to predictions if True (only for Aug24/May24)
+    version: None -> DATA_VERSION. 'Apr26'/'Dec24' are already canonical (no remap);
+             'Aug24'/'May24' are the old class order and need the LUT.
+    remap: apply LUT to predictions if True (only affects Aug24/May24)
+    Photometry, topcam and SSD keys are preserved alongside.
     """
-    fname = f'CMT_{version}.pkl'
-    path = os.path.join(_data_folder, fname)
-    if not os.path.exists(path):
-        path = os.path.join(_data_folder, 'archive', fname)
-    with bz2.BZ2File(path, 'rb') as f:
-        CMT = pickle.load(f)
-    for cohort in CMT:
-        for mouse in CMT[cohort]:
-            for trial in CMT[cohort][mouse]:
-                preds = _get_preds(CMT[cohort][mouse][trial], version)
-                if remap and version != 'Dec24':
-                    preds = lut[preds]
-                CMT[cohort][mouse][trial]['merged'] = preds
-                # Preserve velocity and SSD at top level for easy access
-    return CMT
+    return data_io.load_CMT(version, flatten=True, remap=remap)
 
-def load_CTM(version='Dec24', remap=True):
+def load_CTM(version=None, remap=True):
     """Load CTM pickle (Cohort→Trial→Mouse). Returns dict with 'merged' as preds array."""
-    fname = f'CTM_{version}.pkl'
-    path = os.path.join(_data_folder, fname)
-    if not os.path.exists(path):
-        path = os.path.join(_data_folder, 'archive', fname)
-    with bz2.BZ2File(path, 'rb') as f:
-        CTM = pickle.load(f)
-    for cohort in CTM:
-        for trial in CTM[cohort]:
-            for mouse in CTM[cohort][trial]:
-                preds = _get_preds(CTM[cohort][trial][mouse], version)
-                if remap and version != 'Dec24':
-                    preds = lut[preds]
-                CTM[cohort][trial][mouse]['merged'] = preds
-    return CTM
+    return data_io.load_CTM(version, flatten=True, remap=remap)
 
 def flatten_CMT(CMT, cohorts=None):
     """Flatten CMT into (MT, mouse_to_cohort) dicts.

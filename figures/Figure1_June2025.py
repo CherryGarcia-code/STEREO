@@ -10,18 +10,21 @@ import copy
 import sys
 import os
 import stats_helper_file as shf
+import data_io
 mm=1/25.4
 FPS=15
 sample_rate=15
 second = 15
 minute = 60*second
 #%% Loading saline data
-sys.modules[__name__].__dict__.clear()
+# Free large dictionaries left by a previous cell without wiping the imports.
+# (The old sys.modules[__name__].__dict__.clear() also deleted bz2/pickle/np,
+#  which made this file impossible to run as a script.)
+for _name in ('CMT', 'CTM', 'MT', 'TM', 'stim_days', 'stim_day'):
+    globals().pop(_name, None)
 root_folder = '.'
 folder = 'data/'
-ifile = bz2.BZ2File(folder + 'CMT_Dec24.pkl', 'rb')
-CMT = pickle.load(ifile)
-ifile.close()
+CMT = data_io.load_CMT()
 print('***All dictionaries were loaded***')
 trials  = ['saline1','saline2','saline3','splashTest']
 cohorts = ['drd1_hm4di','drd1_hm3dq','controls','a2a_hm4di','a2a_hm3dq','a2a_opto']
@@ -186,6 +189,7 @@ import helper_functions as hf
 import bz2
 import pickle
 import stats_helper_file as shf
+import data_io
 mm=1/25.4
 FPS=15
 sample_rate=15
@@ -193,12 +197,8 @@ second = 15
 minute = 60*second
 root_folder = '.'
 folder = 'data/'
-ifile = bz2.BZ2File(folder + 'CTM_Dec24.pkl', 'rb')
-CTM = pickle.load(ifile)
-ifile.close()
-ifile = bz2.BZ2File(folder + 'CMT_Dec24.pkl', 'rb')
-CMT = pickle.load(ifile)
-ifile.close()
+CTM = data_io.load_CTM()
+CMT = data_io.load_CMT()
 print('***All dictionaries were loaded***')
 behaviors = ['Jump', 'Undefined', 'Floor licking', 'Wall licking', 'Grooming', 'Body licking', 'Rearing', 'Locomotion', 'Stationary']
 colors = ["#696969", "#d3d3d3", "#d73027", "#e57373", "#c4a7e7", "#8e63b8", "#b3e5fc", "#3399cc", "#1f4e79"]

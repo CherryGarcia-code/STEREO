@@ -29,7 +29,7 @@ os.makedirs(output_folder, exist_ok=True)
 # ---------------------------------------------------------------------------
 # Load data + sandwich detection (same as DREADDs script)
 # ---------------------------------------------------------------------------
-CMT = load_CMT('Dec24')
+CMT = load_CMT()
 
 dreadd_cohorts = ['drd1_hm4di', 'drd1_hm3dq', 'controls', 'a2a_hm4di', 'a2a_hm3dq']
 dreadd_labels = {

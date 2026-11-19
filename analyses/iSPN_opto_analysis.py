@@ -9,73 +9,84 @@ import scipy.stats as stats
 import os
 import helper_functions as hf
 
-root_folder = '.'
+root_folder = 'output'
 folder = 'data/'
 mm = 1 / 25.4
 
-# --- A2a opto cocaine stim data ---
-ifile = bz2.BZ2File(folder + 'CTM_Aug24.pkl', 'rb')
-stim_days = pickle.load(ifile)['a2a_opto']
-stim_days = {key: stim_days[key] for key in ['cocaine6laserStim', 'cocaine8laserStim']}
-ifile.close()
+import data_io
 
-# LUT remap (same as A2a_opto.py)
+# NOTE ON LABEL ORDERS. This script deliberately mixes two conventions, as it
+# always has: the opto-stim section indexes behaviours by `behaviors_a2a`
+# (canonical), while the splash-test section indexes by `behaviors_splash`
+# (the older order, with 'Undefined' and Stationary/Locomotion swapped).
+# Apr26 stores canonical labels, so the splash-side dictionaries are permuted
+# onto `behaviors_splash` below. The permutation is derived from the names, so
+# a mismatch raises rather than silently mislabelling.
+
+_CTM = data_io.load_CTM(flatten=True)
+
+# --- A2a opto cocaine stim data (canonical order) ---
+stim_days = {key: {m: {**_CTM['a2a_opto'][key][m],
+                       'merged': np.copy(_CTM['a2a_opto'][key][m]['merged'])}
+                   for m in _CTM['a2a_opto'][key]}
+             for key in ['cocaine6laserStim', 'cocaine8laserStim']}
+
 behaviors_a2a = ['Jump', 'Undefined', 'Floor licking', 'Wall licking',
                  'Grooming', 'Body licking', 'Rearing', 'Locomotion', 'Stationary']
 colors_a2a = ["#696969", "#d3d3d3", "#d73027", "#e57373", "#c4a7e7",
               "#8e63b8", "#b3e5fc", "#3399cc", "#1f4e79"]
-lut = np.array([4, 5, 3, 2, 6, 1, 8, 7, 0])
-for stim_day in stim_days:
-    for m in stim_days[stim_day]:
-        stim_days[stim_day][m]['merged'] = lut[stim_days[stim_day][m]['merged']]
-
-# --- A2a splash test opto data ---
-ifile = bz2.BZ2File(folder + 'CTM_May24.pkl', 'rb')
-CTM_May24 = pickle.load(ifile)
-ifile.close()
-splash_stim_days = {key: CTM_May24['a2a_opto'][key]
-                    for key in ['splashTest1p2mW', 'splashTest2p2mW']
-                    if key in CTM_May24['a2a_opto']}
-
-# --- Splash test baseline data (all cohorts) ---
-ifile = bz2.BZ2File(folder + 'CMT_May24.pkl', 'rb')
-CMT_May24 = pickle.load(ifile)
-ifile.close()
 
 behaviors_splash = ['Grooming', 'Body licking', 'Wall licking', 'Floor licking',
-                    'Rearing', 'Back to camera', 'Stationary', 'Locomotion', 'Jump']
-colors_splash = ['#c21296', '#06d6a0', '#ee476f', '#1189b1', '#ffd169',
-                 '#783f04', '#596163', '#969595', '#b4a7d6']
+                    'Rearing', 'Undefined', 'Stationary', 'Locomotion', 'Jump']
+_relabel_splash = data_io.relabel_lut(behaviors_splash)
+
+# --- A2a splash test opto data (behaviors_splash order) ---
+for _l1 in _CTM.values():
+    for _l2 in _l1.values():
+        for _e in _l2.values():
+            _e['merged'] = _relabel_splash[_e['merged']]
+CTM_splash = _CTM
+splash_stim_days = {key: CTM_splash['a2a_opto'][key]
+                    for key in ['splashTest1p2mW', 'splashTest2p2mW']
+                    if key in CTM_splash['a2a_opto']}
+
+# --- Splash test baseline data, all cohorts (behaviors_splash order) ---
+CMT_splash = data_io.load_CMT(flatten=True)
+for _l1 in CMT_splash.values():
+    for _l2 in _l1.values():
+        for _e in _l2.values():
+            _e['merged'] = _relabel_splash[_e['merged']]
+colors_splash = data_io.palette_for(behaviors_splash)
 cohorts = ['drd1_hm4di', 'drd1_hm3dq', 'controls', 'a2a_hm4di', 'a2a_hm3dq', 'a2a_opto']
 
 # Build splash test dict (same logic as splashTest_behaviorOnly.py)
 splashTest_days = {}
 for c in cohorts:
-    for m in CMT_May24[c]:
-        if 'splashTest' in CMT_May24[c][m]:
+    for m in CMT_splash[c]:
+        if 'splashTest' in CMT_splash[c][m]:
             if c == 'a2a_opto':
                 try:
                     splashTest_days[m] = {}
-                    splashTest_days[m]['pre1'] = CMT_May24[c][m]['BaselineDay1']
+                    splashTest_days[m]['pre1'] = CMT_splash[c][m]['BaselineDay1']
                     if m == 'cA180m6':
-                        splashTest_days[m]['pre2'] = CMT_May24[c][m]['BaselineDay2A2ACreChR2']
+                        splashTest_days[m]['pre2'] = CMT_splash[c][m]['BaselineDay2A2ACreChR2']
                     else:
-                        splashTest_days[m]['pre2'] = CMT_May24[c][m]['BaselineDay2']
-                    splashTest_days[m]['pre3'] = CMT_May24[c][m]['BaselineDay3']
-                    splashTest_days[m]['splashTest'] = CMT_May24[c][m]['splashTest']
+                        splashTest_days[m]['pre2'] = CMT_splash[c][m]['BaselineDay2']
+                    splashTest_days[m]['pre3'] = CMT_splash[c][m]['BaselineDay3']
+                    splashTest_days[m]['splashTest'] = CMT_splash[c][m]['splashTest']
                 except KeyError:
                     del splashTest_days[m]
             else:
                 try:
                     splashTest_days[m] = {}
-                    splashTest_days[m]['pre1'] = CMT_May24[c][m]['saline1']
-                    splashTest_days[m]['pre2'] = CMT_May24[c][m]['saline2']
-                    splashTest_days[m]['pre3'] = CMT_May24[c][m]['saline3']
-                    splashTest_days[m]['splashTest'] = CMT_May24[c][m]['splashTest']
+                    splashTest_days[m]['pre1'] = CMT_splash[c][m]['saline1']
+                    splashTest_days[m]['pre2'] = CMT_splash[c][m]['saline2']
+                    splashTest_days[m]['pre3'] = CMT_splash[c][m]['saline3']
+                    splashTest_days[m]['splashTest'] = CMT_splash[c][m]['splashTest']
                 except KeyError:
                     if m in splashTest_days:
                         del splashTest_days[m]
-del CMT_May24, CTM_May24
+del CMT_splash, CTM_splash
 
 print(f'***Data loaded: {len(stim_days["cocaine6laserStim"])} A2a opto mice, '
       f'{len(splashTest_days)} splash test mice***')
@@ -97,7 +108,7 @@ grouping_lut = np.array([NO_LICKING, NO_LICKING, PATHO_LICKING, PATHO_LICKING,
                          NATURAL_LICKING, NATURAL_LICKING, NO_LICKING, NO_LICKING, NO_LICKING])
 
 #%% ========== ANALYSIS 1: iSPN Opto Transition Probability Matrices ==========
-output_folder = root_folder + '/Figures/iSPN_opto_analysis/'
+output_folder = root_folder + '/iSPN_opto_analysis/'
 os.makedirs(output_folder, exist_ok=True)
 
 first_stim = 10 * minute - RNN_offset

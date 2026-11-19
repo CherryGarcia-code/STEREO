@@ -38,7 +38,7 @@ os.makedirs(output_folder, exist_ok=True)
 # ---------------------------------------------------------------------------
 # Load behavioral data
 # ---------------------------------------------------------------------------
-CMT = load_CMT('Dec24')
+CMT = load_CMT()
 MT, mouse_to_cohort = flatten_CMT(CMT, cohorts)
 
 valid_mice = sorted([m for m in MT if all(t in MT[m] for t in trials)])
@@ -74,7 +74,7 @@ del MT
 from revision_utils import RNN_offset
 
 # iSPN (new encoding) — uses FIXED timing
-CTM_remap = load_CTM('Dec24')
+CTM_remap = load_CTM()
 a2a = CTM_remap.get('a2a_opto', {})
 iSPN_stim = {}
 for trial_name in ['cocaine6laserStim', 'cocaine8laserStim']:
@@ -157,8 +157,8 @@ def compute_opto_diff_perMouse(mice_data, n_beh, opto_dict_ref):
 iSPN_diff = compute_opto_diff_fixed(iSPN_mice, n_behaviors, iSPN_stim_times)
 print(f'iSPN mice: {len(iSPN_mice)}')
 
-# dSPN (Dec24 = canonical new encoding)
-CTM_raw = load_CTM('Dec24')
+# dSPN (Apr26 = canonical encoding)
+CTM_raw = load_CTM()
 dSPN_stim = CTM_raw['drd1_opto']['AloneStim']
 del CTM_raw
 
@@ -168,7 +168,7 @@ dSPN_diff = compute_opto_diff_perMouse(dSPN_data, n_behaviors, opto_dict)
 # ---------------------------------------------------------------------------
 # Panel D: DREADDs grouped V-graphs (4 testable cohorts)
 # ---------------------------------------------------------------------------
-CMT2 = load_CMT('Dec24')
+CMT2 = load_CMT()
 dreadd_cohorts = ['drd1_hm4di', 'drd1_hm3dq', 'a2a_hm4di', 'a2a_hm3dq']
 dreadd_labels_short = {
     'drd1_hm4di': r'Drd1$_{hm4Di}$', 'drd1_hm3dq': r'Drd1$_{hm3Dq}$',

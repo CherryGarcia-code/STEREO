@@ -518,5 +518,15 @@ data/CMT_*.pkl
 data/CTM_*.pkl
 data/archive/
 
+# Oversized output files (>100 MB)
+output/Stereotypies_development/Ethograms/allMice.pdf
+*.ai
+
+# Per-session ethogram PNGs (~725 MB, regenerate with analyses/locomotionBasedSeparation.py)
+output/LocomotionBasedSeparation/Ethograms/
+
 # Claude Code internal files (memory, plans, skills config)
 .claude/
+
+# Derived fast-load cache (rebuild with tools/build_data_cache.py)
+data/cache/

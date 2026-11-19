@@ -6,7 +6,7 @@ Composite figure: one row per DREADD cohort (drd1_hm4di, drd1_hm3dq, controls,
 a2a_hm4di, a2a_hm3dq). Columns: grouped V-graphs, individual behavior V-graphs,
 bout duration CDFs.
 
-Uses CMT_Aug24.pkl with sandwich detection logic from Figure5_June2025.py.
+Uses CMT_Apr26.pkl with sandwich detection logic from Figure5_June2025.py.
 """
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
@@ -36,7 +36,7 @@ os.makedirs(output_folder, exist_ok=True)
 # ---------------------------------------------------------------------------
 # Data loading
 # ---------------------------------------------------------------------------
-CMT = load_CMT('Dec24')
+CMT = load_CMT()
 
 dreadd_cohorts = ['drd1_hm4di', 'drd1_hm3dq', 'controls', 'a2a_hm4di', 'a2a_hm3dq']
 dreadd_labels = {

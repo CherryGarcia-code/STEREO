@@ -6,12 +6,10 @@ import matplotlib.pyplot as plt
 import helper_functions as hf
 import pickle
 import scipy.signal as signal
-dict_version = 'Dec24'
+import data_io
 root_folder = '.'
 folder = 'data/'
-ifile = bz2.BZ2File(folder + 'CTM_'+dict_version+'.pkl', 'rb')
-stim_day = pickle.load(ifile)['drd1_opto']['AloneStim']
-ifile.close()
+stim_day = data_io.load_CTM()['drd1_opto']['AloneStim']
 temp_file = open(folder+'opto_alignment_dict.pkl', 'rb')
 opto_dict = pickle.load(temp_file)
 temp_file.close()

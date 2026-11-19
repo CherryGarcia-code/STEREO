@@ -10,14 +10,22 @@ import scipy.signal as signal
 import pickle
 import scipy.stats as stats
 import networkx as nx
+import data_io
 model = 'model1'
-folder = 'Data/'+model+'/'
-ifile = bz2.BZ2File(folder + 'CMT.pkl', 'rb')
-CMT = pickle.load(ifile)
-ifile.close()
+folder = 'data/'
+CMT = data_io.load_CMT(flatten=True)
 print('***All dictionaries were loaded***')
-behaviors = ['Grooming', 'Body licking', 'Wall licking', 'Floor licking', 'Rearing', 'Back to camera', 'Locomotion','Stationary', 'Jump']
-colors = ['#c21296', '#06d6a0', '#ee476f', '#1189b1', '#ffd169', '#C49C94', '#B2B2B2', '#BCBDDC','#8DD3C7' ]
+behaviors = ['Grooming', 'Body licking', 'Wall licking', 'Floor licking', 'Rearing', 'Undefined', 'Locomotion','Stationary', 'Jump']
+colors = data_io.palette_for(behaviors)
+# This script indexes behaviours by position in the `behaviors` list above,
+# which is NOT the canonical Apr26 order (note Locomotion/Stationary are also
+# swapped relative to the other legacy scripts). Permute by name so a mismatch
+# raises rather than silently mislabelling.
+_relabel = data_io.relabel_lut(behaviors)
+for _l1 in CMT.values():
+    for _l2 in _l1.values():
+        for _e in _l2.values():
+            _e['merged'] = _relabel[_e['merged']]
 FPS=15
 sample_rate=15
 second = 15
@@ -26,24 +34,25 @@ mpl.rcParams['xtick.labelsize']=10
 mpl.rcParams['ytick.labelsize']=10
 mpl.rcParams['legend.fontsize']=8
 num_of_behaviors = len(behaviors)
-output_folder = folder+'/Ethograms/'
+output_folder = 'output/LocomotionBasedSeparation/Ethograms/'
 SAMPLE_SIZE=10
 stationary_theta = 0.021/float(FPS)
 for c in CMT:
     c_output_folder = output_folder+c+'/'
+    os.makedirs(c_output_folder, exist_ok=True)
     for m in CMT[c]:
         for tr in CMT[c][m]:
             print(c , m , tr)
             predictions = CMT[c][m][tr]['merged']
             predictions[predictions==7] = 8
-            velocity = CMT[c][m][tr]['locomotion']
+            velocity = CMT[c][m][tr]['topcam']['velocity']
             if velocity.size!= predictions.size:
                 velocity = velocity[9:]
                 vigor = vigor[9:]
             stationary_indices = np.intersect1d(np.nonzero(predictions==6)[0],np.nonzero(velocity<=stationary_theta)[0])
             predictions[stationary_indices]=7
             predictions = np.reshape(predictions, (1, predictions.size))
-            vigor = np.max(np.vstack([CMT[c][m][tr]['motion_index']['cam1'],CMT[c][m][tr]['motion_index']['cam2']]),axis=0)
+            vigor = np.max(np.vstack([CMT[c][m][tr]['SSD']['cam1'],CMT[c][m][tr]['SSD']['cam2']]),axis=0)
             if 'photom' in CMT[c][m][tr]:
                 photom = CMT[c][m][tr]['photom']
                 fig, ax, = plt.subplots(4, sharex=True, figsize=(24, 8))
@@ -65,10 +74,12 @@ for c in CMT:
                 plt.gca().spines['top'].set_visible(False)
                 plt.sca(ax[2])
                 plt.ylabel('Motion index\n(a.u.)')
+                # photom[hemisphere] is {'df': ..., 'z': ...}; this axis is labelled
+                # Z-score, so plot the z trace rather than the dict.
                 if 'left' in photom:
-                    ax[3].plot(photom['left'], label='Left hemisphere', alpha=.5, c='green')
+                    ax[3].plot(photom['left']['z'], label='Left hemisphere', alpha=.5, c='green')
                 if 'right' in photom:
-                    ax[3].plot(photom['right'], label='Right hemisphere', alpha=.5, c='red')
+                    ax[3].plot(photom['right']['z'], label='Right hemisphere', alpha=.5, c='red')
                 ax[3].spines['right'].set_visible(False)
                 ax[3].spines['top'].set_visible(False)
                 plt.sca(ax[3])

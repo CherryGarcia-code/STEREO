@@ -3,6 +3,7 @@ import pandas as pd
 import statistics
 from scipy.signal import savgol_filter
 import scipy.stats as stats
+import scipy as sc
 import os
 import scipy.signal as signal
 Hz = 1
@@ -254,9 +255,16 @@ def find_mouse(file):
                 if os.path.exists(folder+cohort+'/'+mouse+'/'+file.replace('.pkl','_ethogram.png')):
                     return mouse
 
-def smoothing(sig , window_len):
-    smooth_window = np.ones(window_len) / window_len
-    smoothed_sig = signal.filtfilt(smooth_window, 1, sig)
+def smoothing(sig , window_len , window='rect'):
+    if window=='hamming':
+        smooth_window = np.hanning(window_len)
+        smooth_window /= np.sum(smooth_window)
+    elif window=='exp':
+        smooth_window = sc.signal.windows.exponential(window_len,tau=5)
+    else:
+        smooth_window = np.ones(window_len) / window_len
+    smoothed_sig = np.copy(sig)
+    smoothed_sig[~np.isnan(sig)] = signal.filtfilt(smooth_window, 1, sig[~np.isnan(sig)])
     return smoothed_sig
 
 
@@ -323,8 +331,8 @@ def remove_IQR_outliers(diff_arr):
     IQR = Q3 - Q1
     low_cutoff = Q1 - (1.5 * IQR)
     high_cutoff = Q3 + (1.5 * IQR)
-    diff_arr[diff_arr < low_cutoff] = np.nan
-    diff_arr[diff_arr > high_cutoff] = np.nan
+    diff_arr = np.argwhere((diff_arr > low_cutoff) & (diff_arr<high_cutoff))
+    # diff_arr[diff_arr > high_cutoff] = np.nan
     return diff_arr
 
 
@@ -410,7 +418,7 @@ def get_PTT(data,B,photom):
 
     return PTT
 
-def find_bouts(data , behavior, pre_bout_quiet_period = 3, threshold_for_bout_length=1):
+def find_bouts(data , behavior, pre_bout_quiet_period = 3, threshold_for_bout_length=2):
     second = 15
     window_end_to_bout_onset = 10 * second
     priors_period = int(pre_bout_quiet_period*second)
@@ -427,3 +435,69 @@ def find_bouts(data , behavior, pre_bout_quiet_period = 3, threshold_for_bout_le
             bout = []
 
     return bouts
+
+
+
+def segment_bouts_per_history(data , goTo_behavior, goFrom_behavior,min_duration_for_hisotry = 30,min_length_for_bout = 15):
+    second = 15
+    window_end_to_bout_onset = 10 * second
+    bouts  = []
+    bout = []
+    for col in range(min_duration_for_hisotry,data.shape[0]-window_end_to_bout_onset):
+        if data[col] == goTo_behavior:
+            bout.append(col)
+        else:
+            if len(bout) > min_length_for_bout:
+                if np.all(data[bout[0]-min_duration_for_hisotry:bout[0]]==goFrom_behavior):
+                    bouts.append(bout)
+            bout = []
+
+
+    return bouts
+
+
+def segment_signal_window(signal,onset_idx,sig_type,pre_switch_window,post_switch_window):
+
+    if onset_idx >= pre_switch_window and signal.shape[0] >= onset_idx + post_switch_window:
+        signal_segment = signal[onset_idx - pre_switch_window:onset_idx + post_switch_window]
+        if sig_type == 'f':
+            signal_segment = np.copy(signal_segment)
+        elif sig_type == 'df/dt':
+            signal_segment = np.copy(np.diff(signal_segment))
+        return signal_segment
+    else:
+        return np.nan
+
+
+def bootstrap(data,num_of_samples=1000):
+    bootstrapped_cdf = np.zeros((num_of_samples,np.max(data)))
+    for i in range(num_of_samples):
+        bootstrapped_data = np.random.choice(data,data.size,replace=True)
+        for j in range(np.max(data)):
+            bootstrapped_cdf[i,j] = np.count_nonzero(bootstrapped_data<=j)/data.size
+
+    bootstrapped_mean = np.mean(bootstrapped_cdf,axis=0)
+    bootstrapped_err = np.sqrt(np.var(bootstrapped_cdf, axis=0)/num_of_samples)
+    return bootstrapped_mean,bootstrapped_err
+
+
+def calc_cdf(data,x_axis):
+    cdf = np.zeros((len(data),len(x_axis)))
+    for i in range(len(data)):
+        dist = np.array(data[i])
+        for j in range(len(x_axis)):
+            cdf[i,j] = np.count_nonzero(dist<=j)/dist.size
+
+    mean = np.mean(cdf,axis=0)
+    err = np.sqrt(np.var(cdf,axis=0)/cdf.shape[0])
+    return mean,err
+
+def dist_to_cdf(dist,x_axis):
+    dist = np.array(dist)
+    cdf = np.zeros(len(x_axis),dtype=np.float32)
+    for x_idx,x_val in enumerate(x_axis):
+        cdf[x_idx] = np.count_nonzero(dist<=x_val)/dist.size
+    return cdf
+
+
+

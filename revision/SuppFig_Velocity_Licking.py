@@ -7,7 +7,7 @@ Panels:
   C: Fraction of licking frames below 0.5 cm/s threshold across sessions
   D: Velocity distribution comparison for saline3 vs cocaine5
 
-Uses CMT_Aug24.pkl, 4 cohorts (excl. hm3Dq).
+Uses CMT_Apr26.pkl, 4 cohorts (excl. hm3Dq).
 """
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
@@ -33,7 +33,7 @@ os.makedirs(output_folder, exist_ok=True)
 # ---------------------------------------------------------------------------
 # Load & flatten
 # ---------------------------------------------------------------------------
-CMT = load_CMT('Dec24')
+CMT = load_CMT()
 MT, mouse_to_cohort = flatten_CMT(CMT, cohorts)
 del CMT
 

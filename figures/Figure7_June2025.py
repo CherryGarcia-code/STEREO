@@ -15,6 +15,7 @@ import pickle
 
 import scipy.stats as stats
 import sys
+import data_io
 
 root_folder = '.'
 folder = root_folder+'Data/'
@@ -45,12 +46,8 @@ behaviors_labels = {NO_LICKING:'No licking',
                  REARING:'Rearing',
                  LOCOMOTION:'Locomotion',
                  STATIONARY:'Stationary'}
-ifile = bz2.BZ2File(folder + 'CTM_Dec24.pkl', 'rb')
-CTM = pickle.load(ifile)
-ifile.close()
-ifile = bz2.BZ2File(folder + 'CMT_Dec24.pkl', 'rb')
-CMT = pickle.load(ifile)
-ifile.close()
+CTM = data_io.load_CTM()
+CMT = data_io.load_CMT()
 print('***All dictionaries were loaded***')
 trials = ['saline1', 'saline2', 'saline3', 'cocaine1','cocaine2', 'cocaine3','cocaine4', 'cocaine5','splashTest']
 grouped_trials = ['saline','cocaine1','cocaine2', 'cocaine3','cocaine4', 'cocaine5','splashTest']
@@ -427,13 +424,17 @@ plt.savefig(output_folder+'/'+goFrom_label.replace(' ','_')+'2'+goTo_label.repla
 plt.savefig(output_folder+'/'+goFrom_label.replace(' ','_')+'2'+goTo_label.replace(' ','_')+'/'+trials_to_present[0]+'/onset.pdf',dpi=300)
 plt.close()
 #%% Load Splash & opto data
-sys.modules[__name__].__dict__.clear()
+# Free the large dictionaries without wiping the imports (the old
+# sys.modules[__name__].__dict__.clear() also deleted bz2/pickle/np).
+for _name in ('CMT', 'CTM', 'MT', 'TM'):
+    globals().pop(_name, None)
 root_folder = '.'
 folder = 'data/'
-ifile = bz2.BZ2File(folder + 'CTM_Aug24.pkl', 'rb')
-stim_days = pickle.load(ifile)['a2a_opto']
+# flatten=True puts the canonical label array at ['merged'], matching the
+# `colors` palette used for the ethograms below. The old CTM_Aug24 load left
+# the pre-LUT class order in place, so those ethograms were mis-coloured.
+stim_days = data_io.load_CTM(flatten=True)['a2a_opto']
 stim_days = {key:stim_days[key] for key in ['splashTest1p2mW','splashTest2p2mW']}
-ifile.close()
 print('***All dictionaries were loaded***')
 behaviors = ['Jump', 'Undefined', 'Floor licking', 'Wall licking', 'Grooming', 'Body licking', 'Rearing', 'Locomotion', 'Stationary']
 colors = ["#696969", "#d3d3d3", "#d73027", "#e57373", "#c4a7e7", "#8e63b8", "#b3e5fc", "#3399cc", "#1f4e79"]

@@ -8,13 +8,13 @@ import pickle
 import scipy.stats as stats
 import os
 
-root_folder = '.'
+import data_io
+root_folder = 'output'
 folder = 'data/'
 
-# Load data
-ifile = bz2.BZ2File(folder + 'CMT_Aug24.pkl', 'rb')
-CMT = pickle.load(ifile)
-ifile.close()
+# Load data. Apr26 stores canonical 9-class labels; flatten=True puts that
+# array at entry['merged'], which is what the rest of this script expects.
+CMT = data_io.load_CMT(flatten=True)
 print('***All dictionaries were loaded***')
 
 behaviors = ['Jump', 'Undefined', 'Floor licking', 'Wall licking', 'Grooming',
@@ -33,15 +33,14 @@ trials = ['saline1', 'saline2', 'saline3', 'cocaine1', 'cocaine2', 'cocaine3', '
 cohorts = ['drd1_hm4di', 'drd1_hm3dq', 'controls', 'a2a_hm4di', 'a2a_hm3dq', 'a2a_opto']
 num_of_trials = len(trials)
 
-# Remap predictions via lut, keeping cohort→mouse mapping
+# Flatten to mouse→trial, keeping the cohort mapping.
+# No LUT remap: Apr26 labels are already in canonical order.
 MT = {}
 mouse_to_cohort = {}
 for c in cohorts:
     for m in CMT[c]:
         MT[m] = copy.deepcopy(CMT[c][m])
         mouse_to_cohort[m] = c
-        for t in MT[m]:
-            MT[m][t]['merged'] = lut[MT[m][t]['merged']]
 del CMT
 
 #%% Switch entropy function
@@ -103,7 +102,7 @@ print(f'Paired t-test (saline vs late cocaine): t({n_mice-1}) = {t_stat:.3f}, '
       f'p = {p_ttest:.4f}, d = {cohens_d:.2f}')
 
 #%% Figure 1: Switch entropy trajectory across sessions
-output_folder = root_folder + '/Figures/Switch_entropy/'
+output_folder = root_folder + '/Switch_entropy/'
 os.makedirs(output_folder, exist_ok=True)
 
 session_colors = ['#808080', '#808080', '#808080',

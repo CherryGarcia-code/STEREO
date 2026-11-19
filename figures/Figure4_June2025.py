@@ -6,12 +6,11 @@ import matplotlib.pyplot as plt
 import helper_functions as hf
 import scipy.signal as signal
 import pickle
+import data_io
 root_folder = '.'
 folder = 'data/'
-ifile = bz2.BZ2File(folder + 'CTM_Dec24.pkl', 'rb')
-stim_days = pickle.load(ifile)['a2a_opto']
+stim_days = data_io.load_CTM()['a2a_opto']
 stim_days = {key:stim_days[key] for key in ['cocaine6laserStim','cocaine8laserStim']}
-ifile.close()
 print('***All dictionaries were loaded***')
 behaviors = ['Jump', 'Undefined', 'Floor licking', 'Wall licking', 'Grooming', 'Body licking', 'Rearing', 'Locomotion', 'Stationary']
 colors = ["#696969", "#d3d3d3", "#d73027", "#e57373", "#c4a7e7", "#8e63b8", "#b3e5fc", "#3399cc", "#1f4e79"]

@@ -1,4 +1,5 @@
 #%% Imports and constants
+import sys, os; sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats
@@ -80,11 +81,10 @@ def calc_entropy(behavior, window_size, stride, n_behaviors, base=2):
     return np.array(all_session_entropy, dtype=float)
 
 #%% Load Saline->cocaine5 data
-root_folder = 'May24'
-folder = root_folder+'/Data/'
-ifile = bz2.BZ2File(folder + 'CMT_Dec24.pkl', 'rb')
-CMT = pickle.load(ifile)
-ifile.close()
+root_folder = 'output'
+import data_io
+folder = 'data/'
+CMT = data_io.load_CMT()
 print('***All dictionaries were loaded***')
 trials  = ['saline1','saline2','saline3','splashTest']
 cohorts = ['drd1_hm4di','drd1_hm3dq','controls','a2a_hm4di','a2a_hm3dq','a2a_opto']
@@ -104,7 +104,7 @@ for cohort in cohorts:
 del CMT
 #%% Within and between session entropy - saline3-> cocaine5
 s = 15
-output_folder = 'May24/Figures/Story_revision/'
+output_folder = 'output/Entropy_analyses/Story_revision/'
 os.makedirs(output_folder, exist_ok=True)
 plt.figure()
 for t_idx,t in enumerate(trials):
@@ -142,11 +142,10 @@ plt.savefig(f'{output_folder}cocaineExposure_entropy_all_mice.png', dpi=200, bbo
 plt.close()
 
 #%% Load D1 opto
-root_folder = 'May24'
-folder = root_folder+'/Data/'
-ifile = bz2.BZ2File(folder + 'CMT_Dec24.pkl', 'rb')
-CMT = pickle.load(ifile)
-ifile.close()
+root_folder = 'output'
+import data_io
+folder = 'data/'
+CMT = data_io.load_CMT()
 print('***All dictionaries were loaded***')
 trials  = ['BaselineDay1','BaselineDay2','BaselineDay3','AloneStim']
 cohorts = ['drd1_opto']
@@ -157,18 +156,30 @@ opto_dict = pickle.load(temp_file)
 temp_file.close()
 ISI = 80 * sec
 stim_dur = 20*sec
+# Rebuild TM for this cohort. It previously carried over from the saline/cocaine
+# block above, so the loop below walked a2a_opto mice and raised KeyError on
+# opto_dict (which only holds the 11 drd1_opto mice).
+TM = {}
+for cohort in cohorts:
+    for mouse in CMT[cohort]:
+        for t in CMT[cohort][mouse]:
+            TM.setdefault(t, {})[mouse] = CMT[cohort][mouse][t]
 #%% Within and between session entropy - D1 opto
 
-from helper_functions import *
+# NOTE: this used to be `from helper_functions import *`, which pulled in that
+# module's `second = 30` / `min = 60*second = 1800`. That shadowed the builtin
+# min() (breaking the min(...) calls further down) and, because this script runs
+# at 15 FPS, silently doubled every duration written as `n * min`. Nothing here
+# needs the star import -- helper_functions is already available as `hf`.
 s = 15
-output_folder = 'May24/Figures/Story_revision/'
+output_folder = 'output/Entropy_analyses/Story_revision/'
 os.makedirs(output_folder, exist_ok=True)
 plt.figure()
 for t_idx,t in enumerate(trials):
     all_mice_entropy = []
     for m in TM[t].keys():
         offset = opto_dict[m][1]
-        predictions = CMT[c][m][t]['merged']['predictions']['smartMerge']
+        predictions = TM[t][m]['merged']['predictions']['smartMerge']
         # make sure you define n_behaviors correctly:
         # n_behaviors = int(np.max(predictions)) + 1  # or your fixed known number
         all_session_entropy = calc_entropy(
@@ -227,7 +238,7 @@ n_mice = len(CMT[c])
 plt.figure()
 
 for t in trials[2:]:
-    all_mice_prob_of_change = np.empty((n_mice, 1 * min - 1))
+    all_mice_prob_of_change = np.empty((n_mice, 1 * minute - 1))
     all_mice_prob_of_change[:] = np.nan
     for m_idx,m in enumerate(CMT[c]):
         if m in ['c494m2']: continue
@@ -235,10 +246,10 @@ for t in trials[2:]:
         baseline_n_switches = []
         predictions = CMT[c][m][t]['merged']['predictions']['smartMerge']
         offset = opto_dict[m][1]
-        first_stim = 3 * min - int((offset / 1000.0) * 15)
-        stim_times = np.arange(first_stim, 14 * min, ISI)
+        first_stim = 3 * minute - int((offset / 1000.0) * 15)
+        stim_times = np.arange(first_stim, 14 * minute, ISI)
         n_stims = len(stim_times)
-        mouse_prob_of_change = np.empty((n_stims, 1 * min-1))
+        mouse_prob_of_change = np.empty((n_stims, 1 * minute-1))
         mouse_prob_of_change[:] = np.nan
         for time_idx, time in enumerate(stim_times[:5]):
             stim_predictions = np.copy(predictions[time-stim_dur:time+2*stim_dur])

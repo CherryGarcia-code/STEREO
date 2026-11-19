@@ -176,8 +176,8 @@ def plot_heatmap(ax, traces, durations, title, cmap='magma', vmin=-0.5, vmax=1.5
 def main():
     setup_style()
 
-    print('Loading CMT_Dec24...')
-    CMT = load_CMT('Dec24')
+    print('Loading CMT...')
+    CMT = load_CMT()
 
     print('Collecting grooming bouts...')
     grooming_data = collect_bouts(CMT, GROOMING)

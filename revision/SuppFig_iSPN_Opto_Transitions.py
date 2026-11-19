@@ -8,7 +8,7 @@ Panels:
   C. Difference matrix (ON − OFF) with significance markers
   D–F. Pre/During/Post fraction V-graphs for surface licking, locomotion, grooming
 
-Uses CTM_Aug24.pkl, a2a_opto cohort.
+Uses CTM_Apr26.pkl, a2a_opto cohort.
 Reuses pattern from analyses/iSPN_opto_analysis.py.
 """
 import sys, os
@@ -35,7 +35,7 @@ os.makedirs(output_folder, exist_ok=True)
 # ---------------------------------------------------------------------------
 # Load data
 # ---------------------------------------------------------------------------
-CTM = load_CTM('Dec24')
+CTM = load_CTM()
 stim_days_raw = CTM['a2a_opto']
 stim_days = {key: stim_days_raw[key] for key in ['cocaine6laserStim', 'cocaine8laserStim']
              if key in stim_days_raw}

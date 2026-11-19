@@ -8,7 +8,7 @@ Panels:
   Row 2 (J–L): Transition rate, distinct behaviors per window, switch entropy timecourses
   Row 3 (M–Q): Bout duration CDFs for key behaviors (floor lick, wall lick, grooming, locomotion, rearing)
 
-Uses CMT_Aug24.pkl, 4 cohorts (excl. hm3Dq).
+Uses CMT_Apr26.pkl, 4 cohorts (excl. hm3Dq).
 """
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
@@ -37,7 +37,7 @@ os.makedirs(output_folder, exist_ok=True)
 # ---------------------------------------------------------------------------
 # Load & flatten
 # ---------------------------------------------------------------------------
-CMT = load_CMT('Dec24')
+CMT = load_CMT()
 MT, mouse_to_cohort = flatten_CMT(CMT, cohorts)
 del CMT
 print(f'Loaded {len(MT)} mice from {len(cohorts)} cohorts')

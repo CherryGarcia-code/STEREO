@@ -15,6 +15,7 @@ import statsmodels.formula.api as smf
 import statsmodels.api as sm
 import os
 import stats_helper_file as shf
+import data_io
 
 mm=1/25.4
 FPS=15
@@ -48,12 +49,8 @@ behaviors_labels = {NO_LICKING:'No licking',
                  REARING:'Rearing',
                  LOCOMOTION:'Locomotion',
                  STATIONARY:'Stationary'}
-ifile = bz2.BZ2File(folder + 'CTM_Dec24.pkl', 'rb')
-CTM = pickle.load(ifile)
-ifile.close()
-ifile = bz2.BZ2File(folder + 'CMT_Dec24.pkl', 'rb')
-CMT = pickle.load(ifile)
-ifile.close()
+CTM = data_io.load_CTM()
+CMT = data_io.load_CMT()
 print('***All dictionaries were loaded***')
 trials = ['saline1', 'saline2', 'saline3', 'cocaine1','cocaine2', 'cocaine3','cocaine4', 'cocaine5']
 grouped_trials = ['saline','cocaine1','cocaine2', 'cocaine3','cocaine4', 'cocaine5','splashTest']
@@ -395,8 +392,11 @@ plt.savefig(output_folder+c+'_'+m+'_'+tr+'.png',bbox_inches='tight',dpi=300)
 plt.savefig(output_folder+c+'_'+m+'_'+tr+'.pdf',bbox_inches='tight', dpi=300)
 plt.close()
 #%% Load Ca event-associated bouts
-sys.modules[__name__].__dict__.clear()
-ifile = bz2.BZ2File('output/Photometry/forPaper/finalManuscript_V1_Apr25/NoLicking2FloorLicking/master_table.pkl', 'rb')
+# Free the large dictionaries without wiping the imports (the old
+# sys.modules[__name__].__dict__.clear() also deleted bz2/pickle/np).
+for _name in ('CMT', 'CTM', 'MT', 'TM'):
+    globals().pop(_name, None)
+ifile = bz2.BZ2File('data/master_table.pkl', 'rb')
 master_table = pickle.load(ifile)
 ifile.close()
 c_dspns = '#d73027'

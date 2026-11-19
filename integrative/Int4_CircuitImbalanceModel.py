@@ -77,7 +77,7 @@ def surface_licking_frac(preds):
 
 def run_analysis(cohorts, suffix):
     print(f'\n=== Circuit Imbalance Model ({suffix}) ===')
-    CMT = load_CMT('Dec24')
+    CMT = load_CMT()
     MT, mouse_to_cohort = flatten_CMT(CMT, cohorts)
     del CMT
 

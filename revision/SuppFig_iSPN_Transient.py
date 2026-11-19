@@ -11,7 +11,7 @@ Panels:
   E. Prominence per-session means (line plot, both pathways)
   F. IEI per-session means (line plot, both pathways)
 
-Uses CMT_Dec24.pkl with z-scored photometry signals.
+Uses CMT_Apr26.pkl with z-scored photometry signals.
 Peak detection via scipy.signal.find_peaks(prominence=2, width=5).
 """
 import sys, os
@@ -63,8 +63,8 @@ late_color = '#990000'
 # ---------------------------------------------------------------------------
 # Load data
 # ---------------------------------------------------------------------------
-print('Loading CMT_Dec24...')
-CMT = load_CMT('Dec24')
+print('Loading CMT...')
+CMT = load_CMT()
 
 # ---------------------------------------------------------------------------
 # Build exclusion lookup sets for fast checking

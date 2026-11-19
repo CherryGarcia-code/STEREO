@@ -1,9 +1,8 @@
 #%% dSPN (Drd1) Optogenetic Analysis: Bout Duration & Transition Probabilities
 # ============================================================================
-# NOTE: This script requires May25/Data/CTM_May25.pkl and
-#       May25/Data/opto_alignment_dict.pkl which are NOT present in this
-#       workspace. Create the May25/Data/ directory and place the files there,
-#       then run this script.
+# Data: drd1_opto / AloneStim from the Apr26 dictionaries (data_io.load_CTM)
+# plus data/opto_alignment_dict.pkl, whose 11 keys are exactly the 11
+# drd1_opto mice. Both are present in this workspace.
 # ============================================================================
 
 import sys, os; sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
@@ -16,24 +15,19 @@ import scipy.stats as stats
 import os
 import helper_functions as hf
 
-root_folder = 'May25'
+root_folder = 'output'
 folder = 'data/'
 mm = 1 / 25.4
 
 # Check data availability
-if not os.path.exists(folder + 'CTM_May25.pkl'):
-    raise FileNotFoundError(
-        f'{folder}CTM_May25.pkl not found. '
-        'Copy the Drd1 opto data files into May25/Data/ and rerun.')
 if not os.path.exists(folder + 'opto_alignment_dict.pkl'):
     raise FileNotFoundError(
         f'{folder}opto_alignment_dict.pkl not found. '
-        'Copy the alignment dict into May25/Data/ and rerun.')
+        f'{folder}opto_alignment_dict.pkl not found.')
 
 # --- Load data ---
-ifile = bz2.BZ2File(folder + 'CTM_May25.pkl', 'rb')
-stim_day = pickle.load(ifile)['drd1_opto']['AloneStim']
-ifile.close()
+import data_io
+stim_day = data_io.load_CTM(flatten=True)['drd1_opto']['AloneStim']
 
 temp_file = open(folder + 'opto_alignment_dict.pkl', 'rb')
 opto_dict = pickle.load(temp_file)
@@ -42,9 +36,15 @@ print(f'***Drd1 opto data loaded: {len(stim_day)} mice***')
 
 # --- Constants ---
 behaviors = ['Grooming', 'Body licking', 'Wall licking', 'Floor licking',
-             'Rearing', 'Back to camera', 'Stationary', 'Locomotion', 'Jump']
-colors = ['#c21296', '#06d6a0', '#ee476f', '#1189b1', '#ffd169',
-          '#783f04', '#596163', '#969595', '#b4a7d6']
+             'Rearing', 'Undefined', 'Stationary', 'Locomotion', 'Jump']
+colors = data_io.palette_for(behaviors)
+
+# Transition matrices and bout segmentation below index by position in the
+# `behaviors` list above, which is NOT the canonical Apr26 order. Permute by
+# name so a mismatch raises rather than silently mislabelling the matrices.
+_relabel = data_io.relabel_lut(behaviors)
+for _m in stim_day:
+    stim_day[_m]['merged'] = _relabel[stim_day[_m]['merged']]
 FPS = 15
 second = 15
 minute = 60 * second
@@ -56,7 +56,7 @@ num_of_mice = len(stim_day)
 VDB = 0
 nVDB = 1
 
-output_folder = root_folder + '/Figures/dSPN_opto_analysis/'
+output_folder = root_folder + '/dSPN_opto_analysis/'
 os.makedirs(output_folder, exist_ok=True)
 
 #%% ========== ANALYSIS 3a: Transition Probability Matrices ==========
@@ -114,7 +114,7 @@ for i in range(num_of_behaviors):
             _, p_matrix[i, j] = stats.ttest_rel(vals_on[valid], vals_off[valid])
 
 # --- Figure: Transition matrices ---
-short_labels = ['Grm', 'BdL', 'WlL', 'FlL', 'Rer', 'BtC', 'Stn', 'Loc', 'Jmp']
+short_labels = ['Grm', 'BdL', 'WlL', 'FlL', 'Rer', 'Udf', 'Stn', 'Loc', 'Jmp']
 fig, axes = plt.subplots(1, 3, figsize=(180 * mm, 55 * mm))
 vmax_abs = max(np.nanmax(mean_off), np.nanmax(mean_on))
 

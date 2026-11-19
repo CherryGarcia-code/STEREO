@@ -8,6 +8,15 @@ cross-validation (LOO-CV) to give unbiased performance estimates with N~24.
 Features from saline3: surface licking fraction, switch entropy,
 transition rate, grooming fraction, locomotion fraction.
 
+Sensitivity to the dataset version: surface licking and grooming are provably
+unchanged between the Dec24 and Apr26 dictionaries. The other three are not.
+Locomotion occupancy (class 7) and transition rate both move with the Apr26
+locomotion velocity threshold, which reassigned 2,108,692 frames from
+Locomotion to Stationary and fragmented locomotor bouts (+13.6% bouts
+corpus-wide). They are legitimate Apr26 quantities, but their values are not
+comparable to Dec24 ones. Switch entropy is now computed with the manuscript's
+sliding-window method rather than a single whole-session window.
+
 Outputs:
   - Int2_EarlyPredictorModel_4cohorts.png/pdf
   - Int2_EarlyPredictorModel_6cohorts.png/pdf
@@ -50,9 +59,13 @@ def extract_features(preds):
     grooming = occ[GROOMING]
     locomotion = occ[LOCOMOTION]
 
-    # Switch entropy (whole session, single window)
-    sw = calc_switch_entropy(preds, n, n, n_behaviors)
-    entropy = sw[0] if len(sw) > 0 and not np.isnan(sw[0]) else np.nan
+    # Switch entropy, measured the way the manuscript measures it (FigureS2 S2E,
+    # and Int3): sliding 180 s windows with a 30 s stride, averaged to one value
+    # per session. A single whole-session window instead tracks how the 9-class
+    # alphabet happens to be partitioned -- that is what made the old Int3 result
+    # flip sign between the Dec24 and Apr26 dictionaries.
+    sw = calc_switch_entropy(preds, window_frames, step_frames, n_behaviors)
+    entropy = float(np.nanmean(sw)) if np.any(np.isfinite(sw)) else np.nan
 
     # Transition rate (switches/min)
     tr = transition_rate(preds, n_behaviors)
@@ -86,7 +99,7 @@ def ridge_predict(X_train, y_train, X_test, alpha=1.0):
 
 def run_analysis(cohorts, suffix):
     print(f'\n=== Early Predictor Model ({suffix}) ===')
-    CMT = load_CMT('Dec24')
+    CMT = load_CMT()
     MT, mouse_to_cohort = flatten_CMT(CMT, cohorts)
     del CMT
 

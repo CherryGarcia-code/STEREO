@@ -2,7 +2,7 @@
 """
 Addresses R4-Fig2L (activation difference explained by bout duration?).
 
-NOTE: Full analysis requires photometry data (CMT_Dec24.pkl / master_table.pkl)
+NOTE: Full analysis requires photometry data (CMT_Apr26.pkl / master_table.pkl)
 which are not available locally. This script provides the behavioral component:
 comparing bout durations of floor/wall licking between dSPN-recorded and
 iSPN-recorded animals during saline and cocaine sessions.
@@ -11,7 +11,7 @@ Panels:
   A-B: Bout duration CDFs for floor licking and wall licking, dSPN vs iSPN mice
   C: Mean bout duration across sessions for both groups
 
-Uses CMT_Aug24.pkl. dSPN mice = drd1_hm4di gcamp_mice. iSPN mice = a2a_hm3dq/a2a_hm4di gcamp_mice.
+Uses CMT_Apr26.pkl. dSPN mice = drd1_hm4di gcamp_mice. iSPN mice = a2a_hm3dq/a2a_hm4di gcamp_mice.
 """
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
@@ -48,7 +48,7 @@ iSPN_mice = ['c514Bm2', 'c514Bm8',                    # drd1_hm3dq gcamp
 # ---------------------------------------------------------------------------
 # Load data
 # ---------------------------------------------------------------------------
-CMT = load_CMT('Dec24')
+CMT = load_CMT()
 
 # Flatten to find our target mice
 MT = {}
@@ -159,4 +159,4 @@ ax_c.text(-0.15, 1.15, 'C', transform=ax_c.transAxes, fontsize=10, fontweight='b
 
 save_fig(fig, output_folder, 'SuppFig9_dSPN_vs_iSPN_BoutDur')
 print(f'\nDone — dSPN: {len(found_dSPN)} mice, iSPN: {len(found_iSPN)} mice')
-print('\nNOTE: Full analysis (photometry amplitude correlation) requires CMT_Dec24.pkl')
+print('\nNOTE: Full analysis (photometry amplitude correlation) requires CMT_Apr26.pkl')

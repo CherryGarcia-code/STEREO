@@ -6,7 +6,7 @@ Panels:
   A-B: Switch entropy + transition rate: laser-ON vs laser-OFF (iSPN opto)
   C-D: Switch entropy + transition rate: Pre/During/Post CNO (DREADDs, per cohort)
 
-Uses CTM_Aug24.pkl (opto), CMT_Aug24.pkl (DREADDs).
+Uses CTM_Apr26.pkl (opto), CMT_Apr26.pkl (DREADDs).
 """
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
@@ -36,7 +36,7 @@ os.makedirs(output_folder, exist_ok=True)
 # PART 1: iSPN Opto — entropy ON vs OFF
 # ==========================================================================
 print('=== iSPN Opto ===')
-CTM = load_CTM('Dec24')
+CTM = load_CTM()
 stim_days_raw = CTM['a2a_opto']
 stim_days = {key: stim_days_raw[key] for key in ['cocaine6laserStim', 'cocaine8laserStim']
              if key in stim_days_raw}
@@ -108,7 +108,7 @@ print(f'  Trans rate — OFF: {np.nanmean(trans_rate_off):.1f} ON: {np.nanmean(t
 # PART 2: DREADDs — entropy Pre/During/Post CNO
 # ==========================================================================
 print('\n=== DREADDs ===')
-CMT = load_CMT('Dec24')
+CMT = load_CMT()
 
 dreadd_cohorts = ['drd1_hm4di', 'drd1_hm3dq', 'controls', 'a2a_hm4di', 'a2a_hm3dq']
 dreadd_labels = {

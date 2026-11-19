@@ -42,7 +42,7 @@ def transitions_in_epochs(predictions, epoch_frames, n_beh):
 # ---------------------------------------------------------------------------
 # iSPN data (new encoding, remapped)
 # ---------------------------------------------------------------------------
-CTM_remap = load_CTM('Dec24')
+CTM_remap = load_CTM()
 a2a_opto = CTM_remap.get('a2a_opto', {})
 
 # Find stim_day
@@ -88,9 +88,9 @@ for mouse, predictions in list(iSPN_mice.items()):
     iSPN_off += transitions_in_epochs(predictions, off_set, n_behaviors)
 
 # ---------------------------------------------------------------------------
-# dSPN data (Dec24 = canonical new encoding)
+# dSPN data (Apr26 = canonical encoding)
 # ---------------------------------------------------------------------------
-CTM_raw = load_CTM('Dec24')
+CTM_raw = load_CTM()
 dSPN_stim_day = CTM_raw['drd1_opto']['AloneStim']
 del CTM_raw
 
