@@ -1,0 +1,24 @@
+
+Region: vls
+control: n=9
+coc_20mgKg: n=9
+coc_30mgKg: n=10
+Kruskal-Wallis H=23.730, p=0.0000
+Mann-Whitney U test: control vs coc_20mgKg: U=0.0, p=0.0004
+Mann-Whitney U test: control vs coc_30mgKg: U=0.0, p=0.0003
+Mann-Whitney U test: coc_20mgKg vs coc_30mgKg: U=1.0, p=0.0004
+Adjusted p-value for control vs coc_20mgKg: 0.0004
+Adjusted p-value for control vs coc_30mgKg: 0.0004
+Adjusted p-value for coc_20mgKg vs coc_30mgKg: 0.0004
+
+Region: dms
+control: n=9
+coc_20mgKg: n=9
+coc_30mgKg: n=10
+Kruskal-Wallis H=19.640, p=0.0001
+Mann-Whitney U test: control vs coc_20mgKg: U=0.0, p=0.0004
+Mann-Whitney U test: control vs coc_30mgKg: U=0.0, p=0.0003
+Mann-Whitney U test: coc_20mgKg vs coc_30mgKg: U=20.0, p=0.0455
+Adjusted p-value for control vs coc_20mgKg: 0.0006
+Adjusted p-value for control vs coc_30mgKg: 0.0006
+Adjusted p-value for coc_20mgKg vs coc_30mgKg: 0.0455

@@ -1,0 +1,348 @@
+EXAMPLE SESSIONS (see ethogram_*.png for the re-shade review)
+  example dSPN c548m8 cocaine1: 2 SL, 32 non-SL stretches, 30% unassigned
+  example dSPN c548m8 cocaine5: 23 SL, 12 non-SL stretches, 36% unassigned
+  example iSPN cA242m9 cocaine1: 1 SL, 17 non-SL stretches, 14% unassigned
+  example iSPN cA242m9 cocaine5: 31 SL, 7 non-SL stretches, 33% unassigned
+
+Surface-licking state analysis of striatal photometry
+======================================================================
+window=15s  SL>=0.5  nonSL<=0.1  min duration=3s
+peaks: z prominence=2.0 (repo convention); df prominence=1.2 absolute; width>=5 frames
+Unit of analysis: stretches -> mouse means -> test across mice.
+
+======================================================================
+SIGNAL = z   PATHWAY = dSPN
+======================================================================
+
+[1] PRIMARY  SL vs non-SL stretches (cocaine)
+  metric                          SL     nonSL      diff       t         p  wilcox p     dz   N
+  Mean signal                  0.008     0.033    -0.025   -0.29    0.7864    0.8438  -0.12   6
+  SD of signal                 0.802     0.806    -0.004   -0.06    0.9569    1.0000  -0.02   6
+  Peak rate (/min)             5.470     4.518     0.952    1.31    0.2463    0.3125   0.54   6
+  Peak amplitude               3.078     3.340    -0.262   -0.81    0.4563    0.8438  -0.33   6
+  Peak width (s)               1.554     1.523     0.031    0.11    0.9155    0.5625   0.05   6
+  Latency to 1st peak (s)      7.099    16.785    -9.686   -1.51    0.1912    0.2188  -0.62   6
+  Stretch duration (s)        33.797    84.250   -50.453   -2.64    0.0460    0.0625  -1.08   6
+
+[2] SECONDARY  SL stretches, early (1st third) vs late (3rd third), cocaine
+  metric                       early      late      diff       t         p     dz   N
+  Mean signal                 -0.058     0.044    -0.103   -1.15    0.3133  -0.52   5
+  SD of signal                 0.650     0.782    -0.133   -1.01    0.3710  -0.45   5
+  Peak rate (/min)             4.195     4.899    -0.704   -1.75    0.1542  -0.78   5
+  Peak amplitude               2.835     3.098    -0.262   -1.08    0.3408  -0.48   5
+  Peak width (s)               1.155     2.068    -0.913   -1.15    0.3127  -0.52   5
+  Latency to 1st peak (s)      9.718     7.289     2.429    0.74    0.5021   0.33   5
+  Stretch duration (s)        36.426    34.886     1.539    0.08    0.9395   0.04   5
+
+[3] state x session third (cell means over mice)
+  Peak rate (/min)
+    SL            4.923 (n=6)       6.478 (n=6)       4.899 (n=5)
+    nonSL         4.419 (n=6)       4.763 (n=5)       4.635 (n=6)
+  Peak amplitude
+    SL            2.796 (n=6)       3.221 (n=6)       3.098 (n=5)
+    nonSL         3.116 (n=6)       3.170 (n=5)       3.549 (n=6)
+  Mean signal
+    SL           -0.046 (n=6)       0.023 (n=6)       0.044 (n=5)
+    nonSL         0.021 (n=6)      -0.057 (n=5)       0.072 (n=6)
+
+[4] across cocaine exposure (SL stretches)
+  Peak rate (/min)            2.147    4.574    5.739    6.223    4.501   trend r=+0.64 p=0.248
+    (n mice)                      4        2        4        4        5
+  Peak amplitude              2.553    2.925    3.322    3.401    2.922   trend r=+0.56 p=0.328
+    (n mice)                      3        2        3        4        5
+  SD of signal                0.616    0.943    0.806    0.861    0.758   trend r=+0.26 p=0.670
+    (n mice)                      4        2        4        4        5
+  Mean signal                -0.132    0.056    0.248    0.176   -0.069   trend r=+0.24 p=0.694
+    (n mice)                      4        2        4        4        5
+
+[5] SALINE control  SL vs non-SL
+  Peak rate (/min)             3.911     3.618     0.293  p=0.7645  N=5
+  Peak amplitude               3.052     3.432    -0.380  p=0.3341  N=5
+  Mean signal                  0.138    -0.026     0.164  p=0.2626  N=5
+
+[confound] mean velocity  SL=0.00176  nonSL=0.00290  ratio=1.65x  p=0.0098
+
+======================================================================
+SIGNAL = z   PATHWAY = iSPN
+======================================================================
+
+[1] PRIMARY  SL vs non-SL stretches (cocaine)
+  metric                          SL     nonSL      diff       t         p  wilcox p     dz   N
+  Mean signal                  0.057     0.002     0.055    0.77    0.4776    0.6875   0.31   6
+  SD of signal                 0.830     0.794     0.036    0.91    0.4054    0.5625   0.37   6
+  Peak rate (/min)             6.475     6.055     0.420    0.59    0.5819    0.6875   0.24   6
+  Peak amplitude               3.080     3.235    -0.155   -0.72    0.5050    1.0000  -0.29   6
+  Peak width (s)               1.283     1.223     0.060    1.19    0.2884    0.4375   0.48   6
+  Latency to 1st peak (s)      6.425     9.119    -2.694   -1.09    0.3246    0.2188  -0.45   6
+  Stretch duration (s)        37.391    58.972   -21.581   -1.35    0.2358    0.3125  -0.55   6
+
+[2] SECONDARY  SL stretches, early (1st third) vs late (3rd third), cocaine
+  metric                       early      late      diff       t         p     dz   N
+  Mean signal                  0.129    -0.009     0.138    3.11    0.0264   1.27   6
+  SD of signal                 0.811     0.905    -0.094   -0.90    0.4077  -0.37   6
+  Peak rate (/min)             5.714     6.603    -0.889   -0.86    0.4275  -0.35   6
+  Peak amplitude               3.132     3.126     0.006    0.03    0.9798   0.01   6
+  Peak width (s)               1.392     1.290     0.102    0.72    0.5060   0.29   6
+  Latency to 1st peak (s)      6.140     5.801     0.339    0.51    0.6316   0.21   6
+  Stretch duration (s)        37.246    33.331     3.915    0.37    0.7289   0.15   6
+
+[3] state x session third (cell means over mice)
+  Peak rate (/min)
+    SL            5.714 (n=6)       6.847 (n=6)       6.603 (n=6)
+    nonSL         5.174 (n=6)       6.100 (n=6)       7.497 (n=6)
+  Peak amplitude
+    SL            3.132 (n=6)       3.067 (n=6)       3.126 (n=6)
+    nonSL         2.967 (n=6)       2.853 (n=6)       3.742 (n=6)
+  Mean signal
+    SL            0.129 (n=6)       0.086 (n=6)      -0.009 (n=6)
+    nonSL         0.001 (n=6)      -0.010 (n=6)       0.029 (n=6)
+
+[4] across cocaine exposure (SL stretches)
+  Peak rate (/min)            4.577    4.650    7.287    6.018    5.952   trend r=+0.58 p=0.306
+    (n mice)                      3        3        5        6        5
+  Peak amplitude              2.788    3.151    3.127    3.031    2.998   trend r=+0.33 p=0.587
+    (n mice)                      2        2        5        6        5
+  SD of signal                1.773    0.651    0.854    0.789    0.824   trend r=-0.62 p=0.268
+    (n mice)                      3        3        5        6        5
+  Mean signal                -0.256    0.119    0.085    0.059    0.020   trend r=+0.52 p=0.374
+    (n mice)                      3        3        5        6        5
+
+[5] SALINE control  SL vs non-SL
+  Peak rate (/min)             4.640     4.901    -0.260  p=0.8158  N=6
+  Peak amplitude               3.258     3.160     0.097  p=0.4157  N=6
+  Mean signal                  0.198    -0.041     0.239  p=0.0326  N=6
+
+[confound] mean velocity  SL=0.00159  nonSL=0.00229  ratio=1.44x  p=0.0186
+
+======================================================================
+SIGNAL = df   PATHWAY = dSPN
+======================================================================
+
+[1] PRIMARY  SL vs non-SL stretches (cocaine)
+  metric                          SL     nonSL      diff       t         p  wilcox p     dz   N
+  Mean signal                 -0.072    -0.008    -0.064   -0.37    0.7244    0.6875  -0.15   6
+  SD of signal                 1.685     1.350     0.335    1.39    0.2235    0.2188   0.57   6
+  Peak rate (/min)            17.346    13.626     3.720    3.23    0.0231    0.0625   1.32   6
+  Peak amplitude               3.507     3.029     0.478    1.90    0.1153    0.1562   0.78   6
+  Peak width (s)               0.920     1.075    -0.155   -1.94    0.1095    0.1562  -0.79   6
+  Latency to 1st peak (s)      2.451     5.233    -2.782   -1.99    0.1031    0.0312  -0.81   6
+  Stretch duration (s)        33.797    84.250   -50.453   -2.64    0.0460    0.0625  -1.08   6
+
+[2] SECONDARY  SL stretches, early (1st third) vs late (3rd third), cocaine
+  metric                       early      late      diff       t         p     dz   N
+  Mean signal                 -0.252     0.141    -0.393   -1.26    0.2756  -0.56   5
+  SD of signal                 1.273     1.952    -0.679   -0.89    0.4253  -0.40   5
+  Peak rate (/min)            14.467    13.058     1.409    0.73    0.5083   0.32   5
+  Peak amplitude               3.393     3.718    -0.325   -0.54    0.6158  -0.24   5
+  Peak width (s)               0.861     1.054    -0.192   -1.78    0.1502  -0.79   5
+  Latency to 1st peak (s)      2.639     2.393     0.246    0.54    0.6173   0.24   5
+  Stretch duration (s)        36.426    34.886     1.539    0.08    0.9395   0.04   5
+
+[3] state x session third (cell means over mice)
+  Peak rate (/min)
+    SL           15.712 (n=6)      19.240 (n=6)      13.058 (n=5)
+    nonSL        13.759 (n=6)      14.330 (n=5)      12.879 (n=6)
+  Peak amplitude
+    SL            3.470 (n=6)       3.714 (n=6)       3.718 (n=5)
+    nonSL         2.757 (n=6)       3.240 (n=5)       3.138 (n=6)
+  Mean signal
+    SL           -0.200 (n=6)      -0.056 (n=6)       0.141 (n=5)
+    nonSL         0.072 (n=6)      -0.146 (n=5)      -0.027 (n=6)
+
+[4] across cocaine exposure (SL stretches)
+  Peak rate (/min)           10.908    7.736   13.245   17.426   20.042   trend r=+0.90 p=0.040
+    (n mice)                      4        2        4        4        5
+  Peak amplitude              3.014    1.892    2.339    4.367    3.390   trend r=+0.53 p=0.357
+    (n mice)                      3        2        4        4        5
+  SD of signal                1.107    0.687    0.990    2.086    1.647   trend r=+0.70 p=0.186
+    (n mice)                      4        2        4        4        5
+  Mean signal                -0.123    0.025    0.411    0.237   -0.210   trend r=+0.02 p=0.970
+    (n mice)                      4        2        4        4        5
+
+[5] SALINE control  SL vs non-SL
+  Peak rate (/min)            13.034    11.159     1.875  p=0.1976  N=5
+  Peak amplitude               2.629     3.030    -0.401  p=0.2930  N=5
+  Mean signal                  0.338    -0.058     0.396  p=0.2608  N=5
+
+[confound] mean velocity  SL=0.00176  nonSL=0.00290  ratio=1.65x  p=0.0098
+
+======================================================================
+SIGNAL = df   PATHWAY = iSPN
+======================================================================
+
+[1] PRIMARY  SL vs non-SL stretches (cocaine)
+  metric                          SL     nonSL      diff       t         p  wilcox p     dz   N
+  Mean signal                  0.030     0.002     0.028    1.36    0.2322    0.3125   0.55   6
+  SD of signal                 0.361     0.298     0.063    3.22    0.0233    0.0625   1.32   6
+  Peak rate (/min)             3.257     1.836     1.421    2.55    0.0514    0.0796   1.04   6
+  Peak amplitude               1.802     1.807    -0.005   -0.05    0.9640    0.6250  -0.02   5
+  Peak width (s)               1.360     1.588    -0.227   -3.78    0.0195    0.0625  -1.69   5
+  Latency to 1st peak (s)     13.235    17.393    -4.158   -0.78    0.4788    0.6250  -0.35   5
+  Stretch duration (s)        37.391    58.972   -21.581   -1.35    0.2358    0.3125  -0.55   6
+
+[2] SECONDARY  SL stretches, early (1st third) vs late (3rd third), cocaine
+  metric                       early      late      diff       t         p     dz   N
+  Mean signal                  0.056     0.010     0.047    2.51    0.0536   1.03   6
+  SD of signal                 0.332     0.402    -0.069   -0.98    0.3729  -0.40   6
+  Peak rate (/min)             2.484     3.168    -0.684   -0.53    0.6203  -0.22   6
+  Peak amplitude               1.861     1.896    -0.035   -0.34    0.7538  -0.17   4
+  Peak width (s)               1.386     1.482    -0.096   -0.27    0.8079  -0.13   4
+  Latency to 1st peak (s)      7.424     8.001    -0.577   -0.38    0.7295  -0.19   4
+  Stretch duration (s)        37.246    33.331     3.915    0.37    0.7289   0.15   6
+
+[3] state x session third (cell means over mice)
+  Peak rate (/min)
+    SL            2.484 (n=6)       3.892 (n=6)       3.168 (n=6)
+    nonSL         1.632 (n=6)       1.378 (n=6)       2.961 (n=6)
+  Peak amplitude
+    SL            1.861 (n=4)       1.765 (n=5)       1.829 (n=5)
+    nonSL         1.659 (n=5)       1.592 (n=5)       2.083 (n=5)
+  Mean signal
+    SL            0.056 (n=6)       0.041 (n=6)       0.010 (n=6)
+    nonSL        -0.006 (n=6)      -0.009 (n=6)       0.039 (n=6)
+
+[4] across cocaine exposure (SL stretches)
+  Peak rate (/min)            2.288    2.146    3.714    3.204    4.049   trend r=+0.86 p=0.063
+    (n mice)                      3        3        5        6        5
+  Peak amplitude              2.480    1.812    1.781    1.640    1.803   trend r=-0.73 p=0.160
+    (n mice)                      1        2        5        5        4
+  SD of signal                0.505    0.292    0.384    0.329    0.412   trend r=-0.29 p=0.639
+    (n mice)                      3        3        5        6        5
+  Mean signal                -0.007    0.060    0.040    0.023    0.010   trend r=-0.02 p=0.976
+    (n mice)                      3        3        5        6        5
+
+[5] SALINE control  SL vs non-SL
+  Peak rate (/min)             1.456     1.637    -0.180  p=0.1806  N=6
+  Peak amplitude               1.968     1.817     0.152  p=0.4697  N=5
+  Mean signal                  0.085    -0.018     0.103  p=0.0399  N=6
+
+[confound] mean velocity  SL=0.00159  nonSL=0.00229  ratio=1.44x  p=0.0186
+
+======================================================================
+EVENT-ALIGNED ANALYSIS  (alignment = state)
+======================================================================
+SUPERSEDED -- kept for the record, no figures emitted.
+t=0 is the state-label boundary. Because the labelling window is
+centred, this LAGS the behaviour by roughly half the window, so the
+baseline can already contain licking. Aligning SL onsets to a real
+behavioural transition while aligning the non-SL control to a
+smoothed threshold crossing manufactured an apparent iSPN effect
+(p=0.0029) that vanishes under correct alignment (p=0.76). Use the
+trueonset section below instead.
+pre=5s  post=10s  baseline=first 2s of pre-window  response=first 5s after transition
+Events with a contaminated pre-window (another stretch of the same
+state inside it) are excluded. Traces averaged within mouse first.
+
+--- signal = z ---
+  pathway event            n mice  n events  resp mean       t        p     dz
+  dSPN    SL onset              6       188      0.218    1.53   0.1871   0.62
+  dSPN    SL offset             6       158      0.053    0.59   0.5812   0.24
+  dSPN    nonSL onset           6       261     -0.229   -2.86   0.0353  -1.17
+  iSPN    SL onset              6       298      0.226    5.40   0.0029   2.21
+  iSPN    SL offset             6       233     -0.066   -0.75   0.4857  -0.31
+  iSPN    nonSL onset           6       297     -0.073   -2.13   0.0867  -0.87
+
+  SL onset vs non-SL onset (paired within mouse, z):
+    dSPN: SL=+0.218  nonSL=-0.229  diff=+0.448  t=2.37  p=0.0638  dz=0.97  N=6
+    iSPN: SL=+0.226  nonSL=-0.073  diff=+0.298  t=4.20  p=0.0085  dz=1.72  N=6
+
+--- signal = df ---
+  pathway event            n mice  n events  resp mean       t        p     dz
+  dSPN    SL onset              6       188      0.436    1.58   0.1753   0.64
+  dSPN    SL offset             6       158      0.286    1.06   0.3392   0.43
+  dSPN    nonSL onset           6       261     -0.609   -1.89   0.1172  -0.77
+  iSPN    SL onset              6       298      0.098    3.15   0.0254   1.29
+  iSPN    SL offset             6       233     -0.025   -0.83   0.4420  -0.34
+  iSPN    nonSL onset           6       297     -0.041   -2.05   0.0957  -0.84
+
+  SL onset vs non-SL onset (paired within mouse, df):
+    dSPN: SL=+0.436  nonSL=-0.609  diff=+1.044  t=1.95  p=0.1083  dz=0.80  N=6
+    iSPN: SL=+0.098  nonSL=-0.041  diff=+0.139  t=3.24  p=0.0230  dz=1.32  N=6
+
+======================================================================
+EVENT-ALIGNED ANALYSIS  (alignment = trueonset)
+======================================================================
+t=0 is the licking transition that caused the state flip (first frame
+of the triggering bout for SL onsets; last frame of the final bout for
+SL offsets and for licking cessation before non-SL). Baseline is
+genuinely pre-licking, so latency IS readable here.
+pre=5s  post=10s  baseline=first 2s of pre-window  response=first 5s after transition
+Events with a contaminated pre-window (another stretch of the same
+state inside it) are excluded. Traces averaged within mouse first.
+
+--- signal = z ---
+  pathway event            n mice  n events  resp mean       t        p     dz
+  dSPN    SL onset              6       151      0.294    3.86   0.0119   1.58
+  dSPN    SL offset             6       156     -0.071   -0.61   0.5694  -0.25
+  dSPN    nonSL onset           6       156      0.359    2.06   0.0941   0.84
+  iSPN    SL onset              6       263      0.028    0.32   0.7626   0.13
+  iSPN    SL offset             6       233     -0.001   -0.01   0.9895  -0.01
+  iSPN    nonSL onset           6       172      0.057    0.43   0.6869   0.17
+
+  SL onset vs non-SL onset (paired within mouse, z):
+    dSPN: SL=+0.294  nonSL=+0.359  diff=-0.066  t=-0.32  p=0.7632  dz=-0.13  N=6
+    iSPN: SL=+0.028  nonSL=+0.057  diff=-0.029  t=-0.17  p=0.8729  dz=-0.07  N=6
+
+--- signal = df ---
+  pathway event            n mice  n events  resp mean       t        p     dz
+  dSPN    SL onset              6       151      0.637    2.28   0.0713   0.93
+  dSPN    SL offset             6       156      0.034    0.11   0.9144   0.05
+  dSPN    nonSL onset           6       156      0.840    1.72   0.1466   0.70
+  iSPN    SL onset              6       263      0.055    1.30   0.2493   0.53
+  iSPN    SL offset             6       233     -0.036   -0.73   0.5001  -0.30
+  iSPN    nonSL onset           6       172      0.023    0.28   0.7894   0.12
+
+  SL onset vs non-SL onset (paired within mouse, df):
+    dSPN: SL=+0.637  nonSL=+0.840  diff=-0.203  t=-0.46  p=0.6681  dz=-0.19  N=6
+    iSPN: SL=+0.055  nonSL=+0.023  diff=+0.032  t=0.33  p=0.7522  dz=0.14  N=6
+
+======================================================================
+TIME-RESOLVED CLUSTER PERMUTATION  (alignment = trueonset)
+======================================================================
+Paired sign-flip cluster permutation over timepoints, 10000 perms,
+cluster-forming alpha 0.05. Sensitive to shape, unlike a window mean.
+
+--- signal = z ---
+  dSPN  SL onset vs 0         N=6  no significant cluster
+  dSPN  nonSL onset vs 0      N=6  no significant cluster
+  dSPN  SL vs nonSL           N=6  no significant cluster
+  iSPN  SL onset vs 0         N=6  no significant cluster
+  iSPN  nonSL onset vs 0      N=6  no significant cluster
+  iSPN  SL vs nonSL           N=6  no significant cluster
+
+--- signal = df ---
+  dSPN  SL onset vs 0         N=6  no significant cluster
+  dSPN  nonSL onset vs 0      N=6  no significant cluster
+  dSPN  SL vs nonSL           N=6  no significant cluster
+  iSPN  SL onset vs 0         N=6  no significant cluster
+  iSPN  nonSL onset vs 0      N=6  no significant cluster
+  iSPN  SL vs nonSL           N=6  no significant cluster
+
+======================================================================
+ROBUSTNESS: primary contrast under other parameters
+======================================================================
+    window       hi/lo  pathway       SL    nonSL        p   N   (peak rate, z)
+        5s     0.4/0.2     dSPN     4.71     4.36   0.5985   6
+        5s     0.4/0.2     iSPN     5.72     5.02   0.2995   6
+        5s     0.5/0.1     dSPN     5.37     4.44   0.2551   6
+        5s     0.5/0.1     iSPN     5.64     5.26   0.6126   6
+        5s    0.6/0.05     dSPN     5.25     4.40   0.3830   6
+        5s    0.6/0.05     iSPN     5.43     5.16   0.7316   6
+       10s     0.4/0.2     dSPN     5.14     4.58   0.3498   6
+       10s     0.4/0.2     iSPN     5.92     5.72   0.7182   6
+       10s     0.5/0.1     dSPN     5.32     4.26   0.1904   6
+       10s     0.5/0.1     iSPN     6.01     5.59   0.6004   6
+       10s    0.6/0.05     dSPN     4.79     4.26   0.5187   6
+       10s    0.6/0.05     iSPN     5.72     5.26   0.5887   6
+       15s     0.4/0.2     dSPN     5.47     4.73   0.1286   6
+       15s     0.4/0.2     iSPN     6.28     5.58   0.1884   6
+       15s     0.5/0.1     dSPN     5.47     4.52   0.2463   6
+       15s     0.5/0.1     iSPN     6.47     6.05   0.5819   6
+       15s    0.6/0.05     dSPN     5.28     4.78   0.6109   6
+       15s    0.6/0.05     iSPN     5.72     5.83   0.8877   6
+       30s     0.4/0.2     dSPN     5.57     5.01   0.4255   6
+       30s     0.4/0.2     iSPN     6.39     5.78   0.4246   6
+       30s     0.5/0.1     dSPN     5.32     4.62   0.2874   6
+       30s     0.5/0.1     iSPN     6.87     5.75   0.2257   6
+       30s    0.6/0.05     dSPN     5.04     4.54   0.5496   6
+       30s    0.6/0.05     iSPN     6.11     5.23   0.4883   6

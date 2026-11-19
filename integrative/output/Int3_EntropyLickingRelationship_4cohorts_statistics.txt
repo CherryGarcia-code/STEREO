@@ -1,0 +1,61 @@
+Int3 - switch entropy and surface licking (4cohorts)
+Method follows the manuscript companion repo, FigureS2 panel S2E.
+Mice with saline3 + cocaine1-5: 24; passing length rule: 24
+
+================ Switch entropy ================
+Reference condition: saline3
+Paired sign-flip cluster permutation test
+Window = 180 s; stride = 30 s; permutations = 10000
+Cluster-forming alpha = 0.05; cluster alpha = 0.05
+
+cocaine1 vs saline3 (N=23 mice, 54 windows)
+  cluster 1: windows 0-11 (0.0-5.5 min), mass=60.44, p=0.0017  *
+
+cocaine2 vs saline3 (N=24 mice, 54 windows)
+  cluster 1: windows 0-13 (0.0-6.5 min), mass=79.00, p=0.0012  *
+
+cocaine3 vs saline3 (N=22 mice, 54 windows)
+  cluster 1: windows 0-11 (0.0-5.5 min), mass=53.59, p=0.0054  *
+  cluster 2: windows 38-41 (19.0-20.5 min), mass=12.79, p=0.1249
+  cluster 3: windows 48-48 (24.0-24.0 min), mass=2.12, p=0.3875
+
+cocaine4 vs saline3 (N=24 mice, 54 windows)
+  cluster 1: windows 0-10 (0.0-5.0 min), mass=47.83, p=0.0061  *
+  cluster 2: windows 39-39 (19.5-19.5 min), mass=2.08, p=0.4543
+  cluster 3: windows 48-53 (24.0-26.5 min), mass=14.05, p=0.1124
+
+cocaine5 vs saline3 (N=22 mice, 54 windows)
+  cluster 1: windows 0-7 (0.0-3.5 min), mass=38.13, p=0.0144  *
+  cluster 2: windows 39-41 (19.5-20.5 min), mass=7.77, p=0.2071
+  cluster 3: windows 48-53 (24.0-26.5 min), mass=18.98, p=0.0663
+
+================ Surface licking ================
+Reference condition: saline3
+Paired sign-flip cluster permutation test
+Window = 180 s; stride = 30 s; permutations = 10000
+Cluster-forming alpha = 0.05; cluster alpha = 0.05
+
+cocaine1 vs saline3 (N=23 mice, 54 windows)
+  cluster 1: windows 0-7 (0.0-3.5 min), mass=20.09, p=0.0663
+  cluster 2: windows 18-43 (9.0-21.5 min), mass=70.54, p=0.0008  *
+  cluster 3: windows 48-53 (24.0-26.5 min), mass=15.54, p=0.0968
+
+cocaine2 vs saline3 (N=24 mice, 54 windows)
+  cluster 1: windows 0-53 (0.0-26.5 min), mass=180.68, p=0.0001  *
+
+cocaine3 vs saline3 (N=24 mice, 54 windows)
+  cluster 1: windows 0-53 (0.0-26.5 min), mass=263.83, p=0.0003  *
+
+cocaine4 vs saline3 (N=24 mice, 54 windows)
+  cluster 1: windows 0-53 (0.0-26.5 min), mass=352.27, p=0.0001  *
+
+cocaine5 vs saline3 (N=24 mice, 54 windows)
+  cluster 1: windows 0-53 (0.0-26.5 min), mass=399.43, p=0.0001  *
+
+================ Within-mouse coupling ================
+Per-mouse Pearson r between window-wise surface licking and switch
+entropy, pooled over saline3 + cocaine1-5; Fisher-z, one-sample t-test.
+N = 24 mice
+mean r (back-transformed) = -0.4003
+t(23) = -5.899, p = 5.17e-06
+range of per-mouse r: [-0.871, 0.153]

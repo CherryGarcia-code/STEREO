@@ -1,0 +1,2 @@
+Dose: coc_20mgKg, Mann-Whitney U=18.00, p=0.0521
+Dose: coc_30mgKg, Mann-Whitney U=82.00, p=0.0173

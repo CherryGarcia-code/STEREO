@@ -1,0 +1,246 @@
+Photometry encoding model (FIR kernels)
+======================================================================
+lags -2.0s to +6.0s, step 0.20s (41 lags)
+events: BOUT onsets (>= 1s long, following >= 2s of not doing it), plus ['velocity', 'SSD']
+Counting every label change instead diluted the locked transient
+3-10x, since ~94% of label changes are sub-second fragments.
+Ridge, alpha by generalised CV; held-out R2 = leave-one-session-out.
+Conditions kept separate; saline is the naive baseline and
+salineOnly is saline after a cocaine history.
+
+======================================================================
+COCAINE SESSIONS
+======================================================================
+  pathway mouse      n sess  held-out R2  shifted null    alpha
+  dSPN    c528m10         4       0.0060       -0.0029       10
+  dSPN    c528m5          4       0.0320       -0.0005       10
+  dSPN    c548m1          5       0.0727       -0.0020       10
+  dSPN    c548m10         5       0.0071       -0.0021       10
+  dSPN    c548m11         4       0.0415       -0.0014       10
+  dSPN    c548m8          5       0.0558       -0.0012      100
+  iSPN    cA184m4         5       0.0700       -0.0021       10
+  iSPN    cA184m7         5       0.0016       -0.0015       10
+  iSPN    cA242m4         5       0.0394       -0.0017      100
+  iSPN    cA242m5         5       0.0137       -0.0022      100
+  iSPN    cA242m6         4      -0.0236       -0.0022       10
+  iSPN    cA242m9         5       0.0329       -0.0024       10
+
+  mean held-out R2 +0.0291 vs shifted null -0.0019; t=3.70, p=0.0035, N=12 mice
+
+  bouts per behaviour (all mice pooled)
+    Jump                  8   <- too few, kernel unreliable
+    Undefined           490
+    Floor licking       901
+    Wall licking        838
+    Grooming            137
+    Body licking         10   <- too few, kernel unreliable
+    Rearing             578
+    Locomotion         1241
+    Stationary         1125
+
+======================================================================
+SALINE SESSIONS
+======================================================================
+  pathway mouse      n sess  held-out R2  shifted null    alpha
+  dSPN    c548m1          3       0.0113       -0.0084       10
+  dSPN    c548m10         3       0.0639       -0.0037       10
+  dSPN    c548m11         3       0.0929        0.0002       10
+  dSPN    c548m8          3      -0.0054       -0.0054    31623
+  iSPN    cA184m4         2      -0.0492       -0.0160       10
+  iSPN    cA184m7         3      -0.0181       -0.0038       10
+  iSPN    cA242m4         3       0.0414       -0.0013      100
+  iSPN    cA242m5         3       0.0007       -0.0082       10
+  iSPN    cA242m6         2      -0.0557       -0.0092       10
+  iSPN    cA242m9         2       0.0419       -0.0036    10000
+
+  mean held-out R2 +0.0124 vs shifted null -0.0059; t=1.31, p=0.22, N=10 mice
+
+  bouts per behaviour (all mice pooled)
+    Jump                  1   <- too few, kernel unreliable
+    Undefined           185
+    Floor licking       238
+    Wall licking        114
+    Grooming            169
+    Body licking         88
+    Rearing             676
+    Locomotion         1331
+    Stationary         1224
+
+======================================================================
+SALINEONLY SESSIONS
+======================================================================
+  pathway mouse      n sess  held-out R2  shifted null    alpha
+  dSPN    c528m10         1          n/a           n/a       10
+  dSPN    c528m5          1          n/a           n/a       10
+  dSPN    c548m1          1          n/a           n/a       10
+  dSPN    c548m10         1          n/a           n/a       10
+  dSPN    c548m11         1          n/a           n/a       10
+  dSPN    c548m8          1          n/a           n/a    10000
+  iSPN    cA184m4         1          n/a           n/a       32
+  iSPN    cA184m7         1          n/a           n/a       10
+  iSPN    cA242m4         1          n/a           n/a       10
+  iSPN    cA242m5         1          n/a           n/a       32
+  iSPN    cA242m6         1          n/a           n/a       10
+  iSPN    cA242m9         1          n/a           n/a       32
+
+  bouts per behaviour (all mice pooled)
+    Jump                  0   <- too few, kernel unreliable
+    Undefined            69
+    Floor licking       128
+    Wall licking         40
+    Grooming             66
+    Body licking         23   <- too few, kernel unreliable
+    Rearing             454
+    Locomotion          778
+    Stationary          633
+
+======================================================================
+KERNEL COMPARISON dSPN vs iSPN — cocaine
+======================================================================
+Signed epoch means, not peak-picking. Cluster permutation over
+lags is corrected across lags; 11 predictors -> Bonferroni 0.0045.
+  predictor        early dSPN early iSPN  p_early  late dSPN  late iSPN   p_late   clusters
+  Jump                 0.0490     0.0694   0.8189     0.0198     0.0271   0.8144   none
+  Undefined            0.0727    -0.0954   0.0397     0.0763    -0.0200   0.1522   none
+  Floor licking        0.0502    -0.2501   0.0022     0.2044     0.0901   0.2736   -0.4..+0.6s p=0.0352
+  Wall licking         0.1974     0.0463   0.0477     0.1524     0.0892   0.5483   none
+  Grooming             0.2703     0.3069   0.7898     0.5667     0.6118   0.8565   none
+  Body licking        -0.0114    -0.0058   0.7276    -0.0124    -0.0084   0.8288   none
+  Rearing              0.0991    -0.0163   0.2596     0.2697    -0.1215   0.0377   +1.2..+4.0s p=0.0156
+  Locomotion          -0.0329    -0.1043   0.2633     0.0366    -0.1096   0.1974   none
+  Stationary           0.1762    -0.0574   0.0289    -0.0407    -0.2311   0.2090   none
+  velocity            -0.0269    -0.0399   0.1503    -0.0058    -0.0109   0.1475   none
+  SSD                 -0.0184    -0.0101   0.5845     0.0066     0.0006   0.4856   none
+
+======================================================================
+KERNEL COMPARISON dSPN vs iSPN — saline
+======================================================================
+Signed epoch means, not peak-picking. Cluster permutation over
+lags is corrected across lags; 11 predictors -> Bonferroni 0.0045.
+  predictor        early dSPN early iSPN  p_early  late dSPN  late iSPN   p_late   clusters
+  Jump                 0.0000     0.0154   0.4468     0.0000     0.0267   0.4468   none
+  Undefined            0.0318    -0.0300   0.6209     0.1097    -0.0057   0.4419   none
+  Floor licking        0.3323     0.1619   0.2567     0.3801     0.3153   0.7694   none
+  Wall licking         0.0314     0.0259   0.8988     0.1144     0.0753   0.7281   none
+  Grooming             0.1943     0.2491   0.8106     0.5496     0.3811   0.4909   none
+  Body licking        -0.0204     0.1727   0.2946     0.4631     0.3030   0.4959   none
+  Rearing             -0.0946    -0.1117   0.7983     0.0338    -0.1266   0.1117   none
+  Locomotion          -0.0243    -0.0385   0.8015     0.0414    -0.0310   0.0745   none
+  Stationary           0.0108    -0.0479   0.0839    -0.0617    -0.1045   0.5496   none
+  velocity            -0.0092    -0.0133   0.4278     0.0017    -0.0030   0.2283   none
+  SSD                  0.0266    -0.0208   0.0373     0.0231    -0.0011   0.0101   none
+
+======================================================================
+KERNEL COMPARISON dSPN vs iSPN — salineOnly
+======================================================================
+Signed epoch means, not peak-picking. Cluster permutation over
+lags is corrected across lags; 11 predictors -> Bonferroni 0.0045.
+  predictor        early dSPN early iSPN  p_early  late dSPN  late iSPN   p_late   clusters
+  Jump                 0.0000     0.0000      nan     0.0000     0.0000      nan   none
+  Undefined            0.1402     0.0027   0.1375     0.1522     0.0122   0.0842   none
+  Floor licking        0.1861    -0.0068   0.2193     0.1696     0.2209   0.6561   none
+  Wall licking         0.1139    -0.0086   0.0462     0.1515    -0.0082   0.0363   +0.4..+1.2s p=0.0190
+  Grooming             0.1675     0.1165   0.6311     0.2270     0.3262   0.4827   none
+  Body licking         0.0477     0.0046   0.1876     0.1844     0.0255   0.2116   none
+  Rearing              0.0147    -0.0636   0.1915     0.0692    -0.0783   0.0383   none
+  Locomotion          -0.0726    -0.0494   0.7360     0.0408    -0.0720   0.0432   none
+  Stationary          -0.0736    -0.1499   0.4101    -0.1545    -0.2263   0.4417   none
+  velocity            -0.0097    -0.0212   0.0689     0.0042    -0.0130   0.0001   none
+  SSD                  0.0505    -0.0097   0.0006     0.0362     0.0004   0.0002   -0.4..+2.2s p=0.0018
+
+======================================================================
+COCAINE vs SALINE kernels (paired within mouse)
+======================================================================
+Both windows are tested: some effects (e.g. floor licking) live in
+the early transient, so a late-only comparison would miss them.
+  predictor       pathwaywindow     cocaine    saline      diff       t        p   N
+  Jump            dSPN   early       0.0927    0.0000    0.0927    1.00   0.3910   4
+  Jump            dSPN   late        0.0354    0.0000    0.0354    1.00   0.3910   4
+  Jump            iSPN   early       0.0694    0.0154    0.0540    0.86   0.4276   6
+  Jump            iSPN   late        0.0271    0.0267    0.0003    0.01   0.9930   6
+  Undefined       dSPN   early      -0.0000    0.0318   -0.0318   -0.30   0.7865   4
+  Undefined       dSPN   late        0.0257    0.1097   -0.0839   -0.72   0.5251   4
+  Undefined       iSPN   early      -0.0954   -0.0300   -0.0654   -1.13   0.3086   6
+  Undefined       iSPN   late       -0.0200   -0.0057   -0.0143   -0.30   0.7768   6
+  Floor licking   dSPN   early       0.0326    0.3323   -0.2997   -2.22   0.1126   4
+  Floor licking   dSPN   late        0.2666    0.3801   -0.1135   -0.82   0.4743   4
+  Floor licking   iSPN   early      -0.2501    0.1619   -0.4120   -5.32   0.0031   6  *
+  Floor licking   iSPN   late        0.0901    0.3153   -0.2252   -1.50   0.1941   6
+  Wall licking    dSPN   early       0.1800    0.0314    0.1486    3.06   0.0549   4
+  Wall licking    dSPN   late        0.1362    0.1144    0.0219    0.27   0.8025   4
+  Wall licking    iSPN   early       0.0463    0.0259    0.0204    0.30   0.7756   6
+  Wall licking    iSPN   late        0.0892    0.0753    0.0139    0.09   0.9282   6
+  Grooming        dSPN   early       0.2964    0.1943    0.1021    0.55   0.6184   4
+  Grooming        dSPN   late        0.5844    0.5496    0.0348    0.18   0.8663   4
+  Grooming        iSPN   early       0.3069    0.2491    0.0578    0.40   0.7072   6
+  Grooming        iSPN   late        0.6118    0.3811    0.2306    1.47   0.2010   6
+  Body licking    dSPN   early       0.0024   -0.0204    0.0228    1.01   0.3856   4
+  Body licking    dSPN   late       -0.0022    0.4631   -0.4652   -2.79   0.0682   4
+  Body licking    iSPN   early      -0.0058    0.1727   -0.1786   -1.32   0.2448   6
+  Body licking    iSPN   late       -0.0084    0.3030   -0.3114   -2.26   0.0733   6
+  Rearing         dSPN   early       0.0137   -0.0946    0.1083    1.02   0.3828   4
+  Rearing         dSPN   late        0.0378    0.0338    0.0040    0.13   0.9030   4
+  Rearing         iSPN   early      -0.0163   -0.1117    0.0954    1.17   0.2956   6
+  Rearing         iSPN   late       -0.1215   -0.1266    0.0051    0.07   0.9484   6
+  Locomotion      dSPN   early      -0.0479   -0.0243   -0.0237   -0.76   0.5004   4
+  Locomotion      dSPN   late       -0.0535    0.0414   -0.0950   -1.99   0.1406   4
+  Locomotion      iSPN   early      -0.1043   -0.0385   -0.0657   -1.48   0.1993   6
+  Locomotion      iSPN   late       -0.1096   -0.0310   -0.0786   -1.08   0.3306   6
+  Stationary      dSPN   early       0.2116    0.0108    0.2008    1.81   0.1688   4
+  Stationary      dSPN   late       -0.0588   -0.0617    0.0029    0.03   0.9810   4
+  Stationary      iSPN   early      -0.0574   -0.0479   -0.0095   -0.32   0.7648   6
+  Stationary      iSPN   late       -0.2311   -0.1045   -0.1266   -1.77   0.1369   6
+  velocity        dSPN   early      -0.0354   -0.0092   -0.0262   -5.68   0.0108   4  *
+  velocity        iSPN   early      -0.0399   -0.0133   -0.0265   -5.17   0.0035   6  *
+  SSD             dSPN   early      -0.0361    0.0266   -0.0627   -3.22   0.0487   4  *
+  SSD             dSPN   late       -0.0037    0.0231   -0.0268   -6.86   0.0063   4  *
+  SSD             iSPN   early      -0.0101   -0.0208    0.0108    1.28   0.2583   6
+
+======================================================================
+SALINEONLY vs SALINE kernels (paired within mouse)
+======================================================================
+Both windows are tested: some effects (e.g. floor licking) live in
+the early transient, so a late-only comparison would miss them.
+  predictor       pathwaywindow  salineOnly    saline      diff       t        p   N
+  Jump            iSPN   late        0.0000    0.0267   -0.0267   -1.00   0.3632   6
+  Undefined       dSPN   early       0.1185    0.0318    0.0868    1.27   0.2948   4
+  Undefined       dSPN   late        0.1099    0.1097    0.0003    0.00   0.9986   4
+  Undefined       iSPN   early       0.0027   -0.0300    0.0328    0.49   0.6445   6
+  Floor licking   dSPN   early       0.2837    0.3323   -0.0486   -0.21   0.8438   4
+  Floor licking   dSPN   late        0.2564    0.3801   -0.1237   -1.82   0.1667   4
+  Floor licking   iSPN   early      -0.0068    0.1619   -0.1687   -2.11   0.0881   6
+  Floor licking   iSPN   late        0.2209    0.3153   -0.0944   -0.65   0.5434   6
+  Wall licking    dSPN   early       0.1255    0.0314    0.0941    0.96   0.4094   4
+  Wall licking    dSPN   late        0.1581    0.1144    0.0438    1.77   0.1751   4
+  Wall licking    iSPN   early      -0.0086    0.0259   -0.0345   -0.81   0.4538   6
+  Wall licking    iSPN   late       -0.0082    0.0753   -0.0835   -1.11   0.3170   6
+  Grooming        dSPN   early       0.1994    0.1943    0.0050    0.04   0.9734   4
+  Grooming        dSPN   late        0.2553    0.5496   -0.2943   -1.65   0.1973   4
+  Grooming        iSPN   early       0.1165    0.2491   -0.1326   -0.76   0.4797   6
+  Grooming        iSPN   late        0.3262    0.3811   -0.0550   -0.30   0.7769   6
+  Body licking    dSPN   early       0.0693   -0.0204    0.0896    2.55   0.0839   4
+  Body licking    dSPN   late        0.2093    0.4631   -0.2538   -1.05   0.3696   4
+  Body licking    iSPN   early       0.0046    0.1727   -0.1682   -1.22   0.2786   6
+  Body licking    iSPN   late        0.0255    0.3030   -0.2776   -1.86   0.1222   6
+  Rearing         dSPN   early      -0.0228   -0.0946    0.0718    1.75   0.1791   4
+  Rearing         dSPN   late        0.0140    0.0338   -0.0198   -0.28   0.7986   4
+  Rearing         iSPN   early      -0.0636   -0.1117    0.0482    0.75   0.4889   6
+  Rearing         iSPN   late       -0.0783   -0.1266    0.0483    0.66   0.5412   6
+  Locomotion      dSPN   early      -0.1130   -0.0243   -0.0887   -1.38   0.2623   4
+  Locomotion      dSPN   late        0.0064    0.0414   -0.0350   -1.09   0.3549   4
+  Locomotion      iSPN   early      -0.0494   -0.0385   -0.0109   -0.18   0.8617   6
+  Locomotion      iSPN   late       -0.0720   -0.0310   -0.0410   -1.70   0.1500   6
+  Stationary      dSPN   early      -0.0901    0.0108   -0.1009   -2.58   0.0821   4
+  Stationary      dSPN   late       -0.1376   -0.0617   -0.0759   -2.98   0.0587   4
+  Stationary      iSPN   early      -0.1499   -0.0479   -0.1020   -1.59   0.1727   6
+  Stationary      iSPN   late       -0.2263   -0.1045   -0.1217   -1.66   0.1571   6
+  velocity        iSPN   early      -0.0212   -0.0133   -0.0078   -1.70   0.1491   6
+  SSD             dSPN   early       0.0418    0.0266    0.0151    1.63   0.2006   4
+  SSD             dSPN   late        0.0329    0.0231    0.0098    2.32   0.1029   4
+  SSD             iSPN   early      -0.0097   -0.0208    0.0111    1.13   0.3105   6
+
+Cross-check: model kernel vs raw bout-triggered average (cocaine)
+  Floor licking   dSPN: corr(kernel, BTA) = +0.960  (kernel peak +1.20s, BTA peak +2.20s)
+  Floor licking   iSPN: corr(kernel, BTA) = +0.996  (kernel peak -0.20s, BTA peak +0.00s)
+  Grooming        dSPN: corr(kernel, BTA) = +0.998  (kernel peak +2.00s, BTA peak +2.00s)
+  Grooming        iSPN: corr(kernel, BTA) = +0.994  (kernel peak +1.00s, BTA peak +1.00s)

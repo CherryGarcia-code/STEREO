@@ -1,0 +1,2 @@
+Dose: coc_20mgKg, t-test t=-2.16, p=0.0519
+Dose: coc_30mgKg, t-test t=3.28, p=0.0083
